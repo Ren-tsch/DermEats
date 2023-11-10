@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const NavigationButton = ({ onPress, title, buttoncolor, textcolor }) => (
+const NavigationButton = ({ onPress, title, buttonColor, textColor }) => (
 <View style={styles.buttonAlign}>
-    <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: buttoncolor }]} onPress={onPress}>
-        <Text style={[styles.buttonText, { color: textcolor}]}>{title}</Text>
+    <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: buttonColor }]} onPress={onPress}>
+        <Text style={[styles.buttonText, { color: textColor}]}>{title}</Text>
     </TouchableOpacity>
 </View>
 );
