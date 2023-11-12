@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const InputTime = ({ placeholder, title, titleColor, borderColor}) => {
+const InputTime = ({ title, titleColor, borderColor}) => {
   const [inputValue, setInputValue] = useState("");
 
   return (
@@ -24,13 +24,6 @@ const InputTime = ({ placeholder, title, titleColor, borderColor}) => {
             placeholder= '00'
             underlineColorAndroid="transparent"
             />
-            <TextInput
-            style={[styles.inputStyle, {borderColor: borderColor}]}
-            value={inputValue}
-            onChangeText={setInputValue}
-            placeholder= 'AM'
-            underlineColorAndroid="transparent"
-            />
         </View>
     </View>
   );
@@ -44,15 +37,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    justifyContent: 'space-between',
   },
   textStyle: {
     textAlign: 'left',
     fontFamily: 'Inter_700Bold',
     fontSize: RFValue(16),
-    textShadowColor: 'black',
-    textShadowOffset: { width: 0.75, height: 0 },
-    textShadowRadius: 1,
     marginBottom: RFValue(5),
   },
   inputStyle: {
@@ -61,7 +50,8 @@ const styles = StyleSheet.create({
     fontSize: RFValue(18),
     borderRadius: RFValue(10),
     textAlign: 'center',
-    width: RFValue(100)
+    width: RFValue(100),
+    marginRight: RFValue(10),
   }
 });
 

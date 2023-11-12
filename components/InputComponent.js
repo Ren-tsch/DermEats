@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
 import TaskActionButton from './TaskActionButton'; // Importiere deine TaskActionButton-Komponente
 import { RFValue } from "react-native-responsive-fontsize";
+import colors from './colors';
 
-const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, showButton= true,}) => {
+const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, showButton= true, textAlignMiddle= false}) => {
   const [inputValue, setInputValue] = useState("");
 
   return (
     <View style={styles.container}>
       {showText && (
-        <Text style={[styles.textStyle, {color: titleColor}]}>{title}
+        <Text style={[styles.textStyle, {color: titleColor, textAlign: textAlignMiddle ? 'center' : 'left'}]}>{title}
         </Text>)}
       <TextInput
         style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0)}]}
@@ -22,8 +23,8 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
         <TaskActionButton
           onPress={onActionPress}
           title={actionButtonTitle}
-          buttonColor={"black"}
-          textColor={"white"}
+          buttonColor={colors.black}
+          textColor={colors.white}
           alignMiddle={false}
         />
       )}
@@ -37,12 +38,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   textStyle: {
-    textAlign: 'left',
     fontFamily: 'Inter_700Bold',
     fontSize: RFValue(16),
-    textShadowColor: 'black',
-    textShadowOffset: { width: 0.75, height: 0 },
-    textShadowRadius: 1,
     marginBottom: RFValue(5),
   },
   inputStyle: {

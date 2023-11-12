@@ -2,8 +2,9 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
+import colors from './colors';
 
-const Navbar = ({ onIconPress, fillColor }) => {
+const Navbar = ({ onIconPress}) => {
   return (
     <View style={styles.navbarContainer}>
       <TouchableOpacity onPress={() => onIconPress('database')}>
@@ -33,9 +34,9 @@ const Navbar = ({ onIconPress, fillColor }) => {
 
 const styles = StyleSheet.create({
   navbarContainer: {
-    backgroundColor: '#568D31',
+    backgroundColor: colors.dermEatsColor,
     width: '100%',
-    height: RFValue(100), // Höhe des Navbar Containers
+    height: RFValue(70), // Höhe des Navbar Containers
     position: 'absolute',
     bottom: 0, // Position am unteren Bildschirmrand
     flexDirection: 'row',
