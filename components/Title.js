@@ -5,16 +5,18 @@ import LeftArrowButton from './LeftArrowButton';
 import RightArrowButton from './RightArrowButton';
 import colors from './colors';
 
-const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor}) => {
+const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, calendarMode= false}) => {
   // Erstelle ein neues Date-Objekt für das aktuelle Datum
   const currentDate = new Date();
   // Konfiguriere die Anzeigeoptionen für den Wochentag und das Datum
   const dayOptions = { weekday: 'short' };
   const dateOptions = { day: 'numeric', month: 'long' };
+  const monthOptions = { month: 'long'}
   
   // Formatierung des Wochentags und des Datums entsprechend der lokalen Einstellungen
   const day = currentDate.toLocaleDateString(undefined, dayOptions).slice(0,2).toUpperCase();
   const date = currentDate.toLocaleDateString(undefined, dateOptions);
+  const month = currentDate.toLocaleDateString(undefined, monthOptions);
 
   const handleLeftArrowClick = () => {
     // Funktion für den Linken Pfeil
@@ -45,8 +47,15 @@ const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitl
             <LeftArrowButton onPress={handleLeftArrowClick} fillColor={colors.white}/>
           )}
           <View style={styles.alignMiddle}>
-            <Text style={styles.dayText}>{day}</Text>
-            <Text style={styles.dateText}>{date}</Text>
+          {!calendarMode && (
+            <>
+              <Text style={styles.dayText}>{day}</Text>
+              <Text style={styles.dateText}>{date}</Text>
+            </>
+          )}
+          {calendarMode && (
+            <Text style={styles.dateText}>{month}</Text>
+          )}
           </View>
           {showArrows && (
             <RightArrowButton onPress={handleRightArrowClick} fillColor={colors.white}/>

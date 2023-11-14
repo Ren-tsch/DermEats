@@ -15,6 +15,7 @@ import FinishOrBackControl from './components/FinishOrBackControl';
 import TaskActionButton from './components/TaskActionButton';
 import NoLogsScreen from './components/NoLogsScreen';
 import colors from './components/colors';
+import CalendarComponent from './components/CalendarComponent';
 
 export default function App() {
   let [fontsLoaded, fontError] = useFonts({
@@ -27,12 +28,30 @@ export default function App() {
     return null;
   }
 
+  const mealsAndSymptoms = [
+    {
+    date: '2023-11-14',
+    meal: true,
+    symptom: true,
+    },
+    {
+      date: '2023-11-13',
+      meal: false,
+      symptom: true,
+    },
+    {
+      date: '2023-11-12',
+      meal: true,
+      symptom: false,
+    },
+  ];
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
-          <Title title="Today's entries" showSubtitle={true} showDateContainer={true} subtitleText={'Saved food'} subtitleTextColor={colors.symptom}/>
-          <NoLogsScreen/>
+          <Title title="Today's entries" showSubtitle={true} showDateContainer={true} subtitleText={'Saved food'} subtitleTextColor={colors.symptom} calendarMode={true}/>
+          <CalendarComponent mealsAndSymptoms={mealsAndSymptoms} />
           <GenericModal isVisible={false}>
             <IngredientContainer title={'test'} titleColor={'green'} showDelete={false} showEdit={false}/>
             <InputComponent title={'Name of the meal'} actionButtonTitle={"Add food"}/>
