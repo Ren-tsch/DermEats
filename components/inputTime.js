@@ -3,7 +3,8 @@ import { View, TextInput, Text, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
 const InputTime = ({ title, titleColor, borderColor}) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValueHour, setHourInputValue] = useState("");
+  const [inputValueMinute, setMinuteInputValue] = useState("");
 
   return (
     <View style={styles.container}>
@@ -12,16 +13,20 @@ const InputTime = ({ title, titleColor, borderColor}) => {
         <View style={styles.inputContainer}>
             <TextInput
             style={[styles.inputStyle, {borderColor: borderColor}]}
-            value={inputValue}
-            onChangeText={setInputValue}
+            value={inputValueHour}
+            onChangeText={setHourInputValue}
             placeholder= '00'
+            keyboardType="numeric"
+            maxLength={2}
             underlineColorAndroid="transparent"
             />
             <TextInput
             style={[styles.inputStyle, {borderColor: borderColor}]}
-            value={inputValue}
-            onChangeText={setInputValue}
+            value={inputValueMinute}
+            onChangeText={setMinuteInputValue}
             placeholder= '00'
+            keyboardType="numeric"
+            maxLength={2}
             underlineColorAndroid="transparent"
             />
         </View>

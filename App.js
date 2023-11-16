@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { useFonts, Inter_900Black, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import Title from './components/Title';
-import Navbar from './components/Navbar';
-import InputComponent from './components/InputComponent';
-import SymptomIntensity from './components/SymptomIntensity';
-import Ingredients from './components/Ingredients';
-import IngredientContainer from './components/IngredientContainer';
-import GenericModal from './components/GenericModal';
-import InputTime from './components/InputTime';
-import FinishOrBackControl from './components/FinishOrBackControl';
-import TaskActionButton from './components/TaskActionButton';
-import NoLogsScreen from './components/NoLogsScreen';
-import colors from './components/colors';
-import CalendarComponent from './components/CalendarComponent';
+import StartScreen from './screens/StartScreen';
+import SelectionScreen from './screens/SelectionScreen';
+import AddMealScreen from './screens/AddMealScreen';
+import AddSymptomScreen from './screens/AddSymptomScreen';
+import { CardStyleInterpolators } from '@react-navigation/stack';
+import { Easing } from 'react-native';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   let [fontsLoaded, fontError] = useFonts({
@@ -28,47 +22,34 @@ export default function App() {
     return null;
   }
 
-  const mealsAndSymptoms = [
-    {
-    date: '2023-11-14',
-    meal: true,
-    symptom: true,
-    },
-    {
-      date: '2023-11-13',
-      meal: false,
-      symptom: true,
-    },
-    {
-      date: '2023-11-12',
-      meal: true,
-      symptom: false,
-    },
-  ];
-
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Title title="Today's entries" showSubtitle={true} showDateContainer={true} subtitleText={'Saved food'} subtitleTextColor={colors.symptom} calendarMode={true}/>
-          <CalendarComponent mealsAndSymptoms={mealsAndSymptoms} />
-          <GenericModal isVisible={false}>
-            <IngredientContainer title={'test'} titleColor={'green'} showDelete={false} showEdit={false}/>
-            <InputComponent title={'Name of the meal'} actionButtonTitle={"Add food"}/>
-            <InputTime title={'Time of consuption'}/>
-          </GenericModal>
-          <StatusBar style="auto" />
-        </View>
-        <Navbar />
-      </SafeAreaView>
-    </SafeAreaProvider> 
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="StartScreen"
+        screenOptions={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {
+                duration: 500, // Dauer in Millisekunden
+                easing: Easing.out(Easing.poly(2)), // Easing-Funktion
+              },
+            },
+            close: {
+              animation: 'timing',
+              config: {
+                duration: 500, // Gleiche Dauer für das Schließen
+                easing: Easing.out(Easing.poly(2)),
+              },
+            },
+          },
+        }}
+      >
+        <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="SelectionScreen" component={SelectionScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="AddMealScreen" component={AddMealScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="AddSymptomScreen" component={AddSymptomScreen} options={{ headerShown: false }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 0.5,
-    padding: 20,
-    backgroundColor: colors.white,
-  },
-});

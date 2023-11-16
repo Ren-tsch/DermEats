@@ -5,7 +5,7 @@ const colors = {
     menu: '#C2AF02',
     symptom: '#ED3241',
     symptomWeak: '#298267',
-    symptomMiddle: '#DFD603',
+    symptomMiddle: '#FFF500',
     symptomStrong: '#DF0303',
     black: '#1F2024',
     white: '#FFFFFF'

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import TaskActionButton from './TaskActionButton';
+import MarginComponent from '../components/MarginComponent';
 import colors from './colors';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const SymptomIntensity = ({ title, titleColor }) => {
     const [activeButton, setActiveButton] = useState(null);
@@ -13,8 +13,9 @@ const SymptomIntensity = ({ title, titleColor }) => {
   
     return (
         <View style={styles.container}>
-            <Text style={[styles.titleTextStyle, {color: titleColor}]}>{title}</Text>
-        <View style={styles.inputContainer}>
+          <Text style={[styles.titleTextStyle, {color: titleColor}]}>{title}</Text>
+          <MarginComponent marginBottom={10}/>
+          <View style={styles.inputContainer}>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomWeak}, activeButton === 0 && activeButtonStyle]}
@@ -24,7 +25,7 @@ const SymptomIntensity = ({ title, titleColor }) => {
             </View>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
-                style={[styles.buttonStyle, {backgroundColor: colors.symptomWeak}, activeButton === 1 && activeButtonStyle]}
+                style={[styles.buttonStyle, {backgroundColor: colors.symptomMiddle}, activeButton === 1 && activeButtonStyle]}
                 onPress={() => setActiveButton(1)}
                 />
                 <Text style={styles.symptomText}>middle</Text>
@@ -37,6 +38,7 @@ const SymptomIntensity = ({ title, titleColor }) => {
                 <Text style={styles.symptomText}>hard</Text>
           </View>
         </View>
+        <MarginComponent marginBottom={10}/>
         <TaskActionButton textColor={colors.white} title={'Add symptom'} buttonColor={colors.black} alignMiddle={false}/>
       </View>
     );
@@ -55,7 +57,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontFamily: 'Inter_700Bold',
     fontSize: RFValue(16),
-    marginBottom: RFValue(5),
   },
   buttonStyle: {
     width: RFValue(25),
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
   symptomText: {
     fontFamily: 'Inter_700Bold',
     fontSize: RFValue(16),
-    marginBottom: RFValue(5),
   },
   intensityContainer: {
     alignItems: 'center',

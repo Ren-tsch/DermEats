@@ -10,15 +10,14 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
   return (
     <View style={styles.container}>
       {showText && (
-        <Text style={[styles.textStyle, {color: titleColor, textAlign: textAlignMiddle ? 'center' : 'left'}]}>{title}
-        </Text>)}
-      <TextInput
-        style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0)}]}
-        value={inputValue}
-        onChangeText={setInputValue}
-        placeholder= {placeholder}
-        underlineColorAndroid="transparent"
-      />
+        <Text style={[styles.textStyle, {color: titleColor, textAlign: textAlignMiddle ? 'center' : 'left'}]}>{title}</Text>)}
+        <TextInput
+          style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0)}]}
+          value={inputValue}
+          onChangeText={setInputValue}
+          placeholder= {placeholder}
+          underlineColorAndroid="transparent"
+        />
       {showButton && (
         <TaskActionButton
           onPress={onActionPress}
