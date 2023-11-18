@@ -4,11 +4,11 @@ import { RFValue } from "react-native-responsive-fontsize";
 import TaskActionButton from './TaskActionButton';
 import LeftArrowButton from './LeftArrowButton';
 
-const FinishOrBackControl = ({ onPressArrowButton, onPressTaskButton, colorArrowButton, colorTaskButton, titleTaskButton, textColorTaskButton, showTaskButton=true}) => (
+const FinishOrBackControl = ({ onPressArrowButton, onPressTaskButton, colorArrowButton, colorTaskButton, titleTaskButton, textColorTaskButton, showSymbolTaskButton=true, showTaskButton=true}) => (
     <View style={styles.container}>
-        <LeftArrowButton style={styles.arrowButton} onPress={onPressArrowButton} fillColor={colorArrowButton} hasPadding={false}/>
+        <LeftArrowButton onPress={onPressArrowButton} fillColor={colorArrowButton} hasPadding={false} changeSize={true} adjustedSize={28}/>
         {showTaskButton && (
-        <TaskActionButton style={styles.taskButtonAlign} onPress={onPressTaskButton} buttonColor={colorTaskButton} title={titleTaskButton} textColor={textColorTaskButton}/>
+        <TaskActionButton onPress={onPressTaskButton} buttonColor={colorTaskButton} title={titleTaskButton} textColor={textColorTaskButton} showSymbol={showSymbolTaskButton}/>
         )}
         {!showTaskButton && (
         <View style={styles.shadowElement}></View>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     shadowElement: {
-        width: RFValue(24),
+        width: RFValue(28),
     },
 });
 

@@ -11,7 +11,7 @@ const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitl
   // Konfiguriere die Anzeigeoptionen für den Wochentag und das Datum
   const dayOptions = { weekday: 'short' };
   const dateOptions = { day: 'numeric', month: 'long' };
-  const monthOptions = { month: 'long'}
+  const monthOptions = { month: 'long', year: 'numeric'}
   
   // Formatierung des Wochentags und des Datums entsprechend der lokalen Einstellungen
   const day = currentDate.toLocaleDateString(undefined, dayOptions).slice(0,2).toUpperCase();

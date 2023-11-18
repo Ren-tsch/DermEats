@@ -4,19 +4,19 @@ import TaskActionButton from './TaskActionButton'; // Importiere deine TaskActio
 import { RFValue } from "react-native-responsive-fontsize";
 import colors from './colors';
 
-const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, showButton= true, textAlignMiddle= false}) => {
-  const [inputValue, setInputValue] = useState("");
+const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, onChangeText, textInputValue, textInputColor, showButton= true, textAlignMiddle= false, textInputEditable = true}) => {
 
   return (
     <View style={styles.container}>
       {showText && (
         <Text style={[styles.textStyle, {color: titleColor, textAlign: textAlignMiddle ? 'center' : 'left'}]}>{title}</Text>)}
         <TextInput
-          style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0)}]}
-          value={inputValue}
-          onChangeText={setInputValue}
+          style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0), fontFamily: textInputEditable ? 'Inter_400Regular' : 'Inter_700Bold', color: textInputColor}]}
+          onChangeText={onChangeText}
           placeholder= {placeholder}
+          value={textInputValue}
           underlineColorAndroid="transparent"
+          editable={textInputEditable}
         />
       {showButton && (
         <TaskActionButton

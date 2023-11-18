@@ -5,10 +5,15 @@ import TaskActionButton from './TaskActionButton';
 import MarginComponent from '../components/MarginComponent';
 import colors from './colors';
 
-const SymptomIntensity = ({ title, titleColor }) => {
+const SymptomIntensity = ({ title, titleColor, onPressAddButton, activeSymptomButton }) => {
+
     const [activeButton, setActiveButton] = useState(null);
-  
-    // Stil für den aktiven Button
+
+    const handleButtonPress = (buttonIndex) => {
+      setActiveButton(buttonIndex);
+      activeSymptomButton(buttonIndex);
+    };
+
     const activeButtonStyle = activeButton !== null ? { borderWidth: 3, borderColor: colors.black } : {};
   
     return (
@@ -19,27 +24,27 @@ const SymptomIntensity = ({ title, titleColor }) => {
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomWeak}, activeButton === 0 && activeButtonStyle]}
-                onPress={() => setActiveButton(0)}
+                onPress={() => handleButtonPress(0)}
                 />
                 <Text style={styles.symptomText}>weak</Text>
             </View>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomMiddle}, activeButton === 1 && activeButtonStyle]}
-                onPress={() => setActiveButton(1)}
+                onPress={() => handleButtonPress(1)}
                 />
                 <Text style={styles.symptomText}>middle</Text>
             </View>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomStrong}, activeButton === 2 && activeButtonStyle]}
-                onPress={() => setActiveButton(2)}
+                onPress={() => handleButtonPress(2)}
                 />
                 <Text style={styles.symptomText}>hard</Text>
           </View>
         </View>
         <MarginComponent marginBottom={10}/>
-        <TaskActionButton textColor={colors.white} title={'Add symptom'} buttonColor={colors.black} alignMiddle={false}/>
+        <TaskActionButton textColor={colors.white} title={'Add symptom'} buttonColor={colors.black} alignMiddle={false} onPress={onPressAddButton}/>
       </View>
     );
 };
@@ -59,8 +64,9 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16),
   },
   buttonStyle: {
-    width: RFValue(25),
-    height: RFValue(25),
+    width: RFValue(30),
+    height: RFValue(30),
+    padding: RFValue(10),
     borderRadius: 10000,
   },
   symptomText: {

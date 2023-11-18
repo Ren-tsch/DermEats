@@ -23,7 +23,8 @@ const AddMealScreen = () => {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                <View style={styles.content}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         <MarginComponent marginTop={10}/>
                         <Title title={"Add meal"} showArrows={false}/>
                         <MarginComponent marginTop={10}/>
@@ -36,10 +37,14 @@ const AddMealScreen = () => {
                         <InputComponent title={'Menu'} placeholder={'Search for a menu'} showButton={true} actionButtonTitle={'Add menu'} titleColor={colors.menu} borderColor={colors.menu}/>
                         <MarginComponent marginTop={10}/>
                         <IngredientContainer title={'Summary'} showDelete={false} showEdit={false}/>
-                        <FinishOrBackControl titleTaskButton={'add meal to entries'} colorTaskButton={colors.dermEatsColor} textColorTaskButton={colors.white} colorArrowButton={colors.dermEatsColor} onPressArrowButton={navigateToSelectionScreen}/>
-                        <MarginComponent marginBottom={15}/>
+                        <View style={styles.ingredientBox}>
+
+                        </View>
                     </ScrollView>
-                <Navbar />
+                    <FinishOrBackControl titleTaskButton={'add to entries'} colorTaskButton={colors.dermEatsColor} textColorTaskButton={colors.white} colorArrowButton={colors.dermEatsColor} onPressArrowButton={navigateToSelectionScreen}/>
+                    <MarginComponent marginBottom={15}/>
+                </View>
+                <Navbar/>
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -53,6 +58,10 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: RFValue(20),
+    },
+    ingredientBox: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
 });
 

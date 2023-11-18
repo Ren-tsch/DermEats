@@ -38,7 +38,7 @@ const SelectionScreen = () => {
                         <NavigationButton title={'Add symptom'} textColor={colors.white} buttonColor={colors.symptom} onPress={navigateToAddSymptom}/>
                     </View>
                     <View>
-                        <FinishOrBackControl showTaskButton={false} colorArrowButton={colors.dermEatsColor} onPressArrowButton={navigateToStartScreen}/>
+                        <FinishOrBackControl showTaskButton={false} colorArrowButton={colors.black} onPressArrowButton={navigateToStartScreen}/>
                         <MarginComponent marginBottom={15} />
                     </View>
                 </View>

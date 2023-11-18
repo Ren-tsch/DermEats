@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         paddingHorizontal: RFValue(15),
-        minWidth: '50%',
+        minWidth: '75%',
     },
     buttonText: {
         fontSize: RFValue(20),
