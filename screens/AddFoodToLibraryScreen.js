@@ -52,13 +52,13 @@ const AddFoodToLibraryScreen = () => {
         navigation.navigate('DatabaseMenuScreen');
     };
 
-    const addFoodToDatabase = () => {
-        addedFood.forEach(element => {
-            addFood(element.Name)
-        })
-
-        DeleteFoodFromSummary(0, addedFood.length)
-    }
+    const addFoodToDatabase = async () => {
+        for (const element of addedFood) {
+            await addFood(element.Name);
+        }
+    
+        DeleteFoodFromSummary(0, addedFood.length);
+    };
 
     return (
         <SafeAreaProvider>
@@ -86,7 +86,7 @@ const AddFoodToLibraryScreen = () => {
                             })}
                         </View>
                     </ScrollView>
-                    <FinishOrBackControl titleTaskButton={'Save to database'} textColorTaskButton={colors.black} showTaskButton={(addedFood.length > 0)} colorTaskButton={colors.food} colorArrowButton={colors.food} onPressArrowButton={navigateToDatabaseMenuScreen} onPressTaskButton={addFoodToDatabase}/>
+                    <FinishOrBackControl titleTaskButton={'Save to library'} textColorTaskButton={colors.black} showTaskButton={(addedFood.length > 0)} showSaveSymbol={true} colorTaskButton={colors.food} colorArrowButton={colors.food} onPressArrowButton={navigateToDatabaseMenuScreen} onPressTaskButton={addFoodToDatabase}/>
                     <MarginComponent marginBottom={15}/>
                 </View>
                 <Navbar/>

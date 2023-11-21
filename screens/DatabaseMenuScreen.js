@@ -39,11 +39,11 @@ const DatabaseMenuScreen = () => {
                     <View style={styles.containerAddButtons}>
                         <NavigationButton title={'Food library'} textColor={colors.white} buttonColor={colors.black} onPress={navigateToFoodLibraryScreen}/>
                         <MarginComponent marginTop={5}/>
-                        <NavigationButton title={'Add food to database'} textColor={colors.black} buttonColor={colors.food} onPress={navigateToAddFoodToLibraryScreen}/>
+                        <NavigationButton title={'Add food to library'} textColor={colors.black} buttonColor={colors.food} onPress={navigateToAddFoodToLibraryScreen}/>
                         <MarginComponent marginTop={40}/>
                         <NavigationButton title={'Menu library'} textColor={colors.white} buttonColor={colors.black} onPress={navigateToMenuLibraryScreen}/>
                         <MarginComponent marginTop={5}/>
-                        <NavigationButton title={'Add menu to database'} textColor={colors.black} buttonColor={colors.menu} onPress={navigateToAddMenuToLibraryScreen}/>
+                        <NavigationButton title={'Add menu to library'} textColor={colors.black} buttonColor={colors.menu} onPress={navigateToAddMenuToLibraryScreen}/>
                     </View>
                     <View>
                         <FinishOrBackControl showTaskButton={false} colorArrowButton={colors.black} onPressArrowButton={navigateToStartScreen}/>

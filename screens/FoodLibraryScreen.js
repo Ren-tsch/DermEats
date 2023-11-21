@@ -30,15 +30,15 @@ const FoodLibraryScreen = () => {
         .catch(error => {
             console.error('Fehler beim Laden der Lebensmittel:', error);
         });
-        console.log('ausgeführt')
     }, [editIngredient])
 
-    const DeleteFoodFromDatabase = (foodID) => {
+    const DeleteFoodFromDatabase = async (foodID) => {
         const updatedFoodDatabase = foodsDatabase.filter(food => food.FoodID !== foodID);
     
         setFoodsDatabase(updatedFoodDatabase);
+        setSelectedFoodID(null);
     
-        deleteFood(foodID).catch(error => {
+        await deleteFood(foodID).catch(error => {
             console.error('Fehler beim Löschen des Lebensmittels:', error);
         });
     }
@@ -62,8 +62,8 @@ const FoodLibraryScreen = () => {
         setSelectedFoodID(null)
     }
 
-    const UpdateFoodInDatabase = () => {
-        updateFood(selectedFoodID, selectedFoodName)
+    const UpdateFoodInDatabase = async () => {
+        await updateFood(selectedFoodID, selectedFoodName)
         setSelectedFoodID(null)
         CloseModal()
     }
@@ -79,14 +79,14 @@ const FoodLibraryScreen = () => {
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
                 <View style={styles.content}>
+                    <MarginComponent marginTop={10}/>
+                    <Title title={"Food library"} showDateContainer={false} showSubtitle={true} subtitleText={'Saved food'} subtitleTextColor={colors.food}/>
                     <GenericModal isVisible={editIngredient}>
                         <InputComponent title={'Name of the food'} borderColor={colors.food} showButton={false} textInputValue={selectedFoodName} onChangeText={setSelectedFoodName}/>
                         <MarginComponent marginBottom={10}/>
-                        <FinishOrBackControl colorArrowButton={colors.food} colorTaskButton={colors.food} textColorTaskButton={colors.black} titleTaskButton={'Save'} showSymbolTaskButton={false} onPressTaskButton={UpdateFoodInDatabase} onPressArrowButton={CloseModal}/>
+                        <FinishOrBackControl colorArrowButton={colors.food} colorTaskButton={colors.food} textColorTaskButton={colors.black} titleTaskButton={'Save'} showSaveSymbol={true} onPressTaskButton={UpdateFoodInDatabase} onPressArrowButton={CloseModal}/>
                     </GenericModal>
-                    <ScrollView keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>
-                        <MarginComponent marginTop={10}/>
-                        <Title title={"Food library"} showDateContainer={false} showSubtitle={true} subtitleText={'Saved food'} subtitleTextColor={colors.food}/>
+                    <ScrollView keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>            
                         <View style={styles.ingredientBox}>
                             {foodsDatabase.map((food) => {
                                 return (
@@ -109,7 +109,7 @@ const FoodLibraryScreen = () => {
                             <TaskActionButton title={'Edit selected food'} buttonColor={colors.black} textColor={colors.white} showSymbol={false} onPress={OpenModal}/>
                         )}
                         <MarginComponent marginBottom={10}/>
-                        <FinishOrBackControl titleTaskButton={'Add food to database'} textColorTaskButton={colors.black} colorTaskButton={colors.food} colorArrowButton={colors.food} onPressArrowButton={navigateToDatabaseMenuScreen} onPressTaskButton={navigateToAddFoodToLibraryScreen}/>
+                        <FinishOrBackControl titleTaskButton={'Add food to library'} textColorTaskButton={colors.black} colorTaskButton={colors.food} colorArrowButton={colors.food} onPressArrowButton={navigateToDatabaseMenuScreen} onPressTaskButton={navigateToAddFoodToLibraryScreen}/>
                         <MarginComponent marginBottom={15}/>
                     </View>
                 </View>

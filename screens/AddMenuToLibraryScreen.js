@@ -11,6 +11,7 @@ import FinishOrBackControl from '../components/FinishOrBackControl';
 import Ingredients from '../components/Ingredients';
 import { RFValue } from 'react-native-responsive-fontsize';
 import colors from '../components/colors';
+import { addMenu, addMenuItem } from '../database/databaseOperations';
 
 const AddMenuToLibraryScreen = () => {
 
@@ -19,22 +20,26 @@ const AddMenuToLibraryScreen = () => {
     const [menuDescription, setMenuDescription] = useState('')
     const [foodDescription, setFoodDescription] = useState('')
     const [menuIngredients, setMenuIngredients] = useState([])
-    const [lockInput, setLockInput] = useState(true)
+    const [editMenuName, setEditMenuName] = useState(true)
+    const [showChangeMenuName, setShowChangeMenuName] = useState(false)
+    const [selectedFoodId, setSelectedFoodId] = useState(null);
 
     const AddMenuIngredientsToSummary = () => {
         if (menuDescription && foodDescription !== '') {
-            const newMenu = {
-                MenuName: menuDescription,
-                FoodName: foodDescription,
+            const newIngredient = {
+                menuName: menuDescription.trimEnd(),
+                foodName: foodDescription.trimEnd(),
+                foodID: selectedFoodId
             }
 
             setMenuIngredients(() => {
-            const updatedIngredients = [...menuIngredients, newMenu]
-            updateInputLockStatus(updatedIngredients.length)
+            const updatedIngredients = [...menuIngredients, newIngredient]
             return updatedIngredients
             })
 
             setFoodDescription('')
+            setEditMenuName(false)
+            setSelectedFoodId(null)
 
         } else {
             Alert.alert(
@@ -49,20 +54,70 @@ const AddMenuToLibraryScreen = () => {
         Keyboard.dismiss();
     }
 
+    
+
+    const EditMenuName = () => {
+        if (menuDescription !== '') {
+            setEditMenuName(!editMenuName)
+            setShowChangeMenuName(!showChangeMenuName)
+        } else {
+            Alert.alert(
+                "Input error",
+                "Please enter a meal name",
+                [
+                    { text: "OK"}
+                ],
+                { cancelable: false }
+            );
+        }
+        
+    }
+
     const DeleteIngredientFromSummary = (index) => {
         const newMenuIngredients = [...menuIngredients]
         newMenuIngredients.splice(index,1)
-        updateInputLockStatus(newMenuIngredients.length)
         setMenuIngredients(newMenuIngredients)
     }
 
-    const updateInputLockStatus = (length) => {
-        setLockInput(!length > 0)
-    }
+    // Speichert die ID des ausgewählten Lebensmittels aus dem InputComponent
+    const handleSelectFoodItem = (id) => {
+        setSelectedFoodId(id);
+    };
 
     const navigateToDatabaseMenuScreen = () => {
         navigation.navigate('DatabaseMenuScreen');
     };
+
+    //Neues Menü zur Datenbank hinzufügen
+    const addMenuToDatabase = async () => {
+        try {
+            const menuResult = await addMenu(menuDescription);
+            const newMenuID = menuResult.insertId;
+    
+            //Hinzufügen der Lebensmittel des Menüs zu MenuItems
+            for (const ingredient of menuIngredients) {
+                let foodID = null;
+                let foodName = null;
+    
+                if (ingredient.foodID) {
+                    foodID = ingredient.foodID; // ID des Lebensmittels aus der Datenbank
+                } else {
+                    foodName = ingredient.foodName; // Name des Lebensmittels, das nicht in der Datenbank ist
+                }
+    
+                await addMenuItem(newMenuID, foodID, foodName);
+            }
+    
+            //Leeren der Zutatenliste
+            setMenuIngredients([]);
+            setMenuDescription('');
+            setEditMenuName(true);
+    
+            console.log("Menü erfolgreich zur Datenbank hinzugefügt.");
+        } catch (error) {
+            console.error("Fehler beim Hinzufügen des Menüs:", error);
+        }
+    }
 
     return (
         <SafeAreaProvider>
@@ -70,18 +125,24 @@ const AddMenuToLibraryScreen = () => {
                 <View style={styles.content}>
                     <MarginComponent marginTop={10}/>
                     <Title title={"Add new menu to library"} subtitleText={'Add menu'} subtitleTextColor={colors.menu} showDateContainer={false} showSubtitle={true}/>
+                    <View>
+                        {editMenuName && (
+                            <InputComponent title={'Name of the menu'} placeholder={'Enter menu name'} onChangeText={setMenuDescription} textInputValue={menuDescription} showButton={showChangeMenuName} actionButtonTitle={'Change menu name'} onActionPress={EditMenuName} borderColor={colors.menu}/>
+                        )}
+                        <MarginComponent marginTop={10}/>
+                        <InputComponent title={'Menu ingredient'} titleColor={colors.food} placeholder={'Enter food'} onChangeText={setFoodDescription} textInputValue={foodDescription} showButton={true} borderColor={colors.food} actionButtonTitle={'Add ingredient'} backgroundColorSuggestions={colors.food} showSuggestions={true} onActionPress={AddMenuIngredientsToSummary} onSelectFoodItem={handleSelectFoodItem}/>
+                        <MarginComponent marginTop={10}/>
+                    </View>
                     <ScrollView keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>
-                        <InputComponent title={'Name of the menu'} placeholder={'Enter menu name'} onChangeText={setMenuDescription} textInputValue={menuDescription} showButton={false} borderColor={colors.menu} textInputEditable={lockInput} textInputColor={lockInput ? colors.black : colors.menu}/>
-                        <MarginComponent marginTop={10}/>
-                        <InputComponent title={'Menu ingredient'} titleColor={colors.food} placeholder={'Enter food'} onChangeText={setFoodDescription} textInputValue={foodDescription} showButton={true} borderColor={colors.food} actionButtonTitle={'Add ingredient'} onActionPress={AddMenuIngredientsToSummary} />
-                        <MarginComponent marginTop={10}/>
-                        <IngredientContainer title={'Summary'} showDelete={false} showEdit={false} showUnderline={false} titleColor={colors.black}/>
+                        {(!editMenuName) && (
+                            <IngredientContainer title={menuDescription} showDelete={false} showEdit={true} showUnderline={false} titleColor={colors.menu} fontSize={RFValue(22)} onPressEdit={EditMenuName}/>
+                        )}
                         <View style={styles.ingredientBox}>
                             {menuIngredients.map((ingredients, index) => {
                                 return (
                                     <Ingredients 
                                         key={index}
-                                        title={`${ingredients.FoodName}`}
+                                        title={`${ingredients.foodName}`}
                                         backgroundColor={colors.food}
                                         textColor={colors.black}
                                         onPress={() => DeleteIngredientFromSummary(index)}
@@ -90,7 +151,7 @@ const AddMenuToLibraryScreen = () => {
                             })}
                         </View>
                     </ScrollView>
-                    <FinishOrBackControl titleTaskButton={'Save to database'} textColorTaskButton={colors.black} colorTaskButton={colors.menu} colorArrowButton={colors.menu} onPressArrowButton={navigateToDatabaseMenuScreen}/>
+                    <FinishOrBackControl titleTaskButton={'Save to database'} textColorTaskButton={colors.black} colorTaskButton={colors.menu} showTaskButton={(menuIngredients.length > 0)} colorArrowButton={colors.menu} showSaveSymbol={true} onPressArrowButton={navigateToDatabaseMenuScreen} onPressTaskButton={addMenuToDatabase}/>
                     <MarginComponent marginBottom={15}/>
                 </View>
                 <Navbar/> 

@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 
-const IngredientContainer = ({ onPressDelete, onPressEdit, title, titleColor, showUnderline=true, showDelete=true, showEdit=true}) => {
+const IngredientContainer = ({ onPressDelete, onPressEdit, title, titleColor, fontSize, showUnderline=true, showDelete=true, showEdit=true}) => {
 
   return (
     <>
@@ -19,7 +19,7 @@ const IngredientContainer = ({ onPressDelete, onPressEdit, title, titleColor, sh
                         </Svg>
                 </TouchableOpacity>
             )}
-            <Text style={[styles.textStyle, {color: titleColor}]}>{title}</Text>
+            <Text style={[styles.textStyle, {color: titleColor, fontSize: fontSize}]}>{title}</Text>
             {showEdit && (
                 <TouchableOpacity onPress={onPressEdit}>
                         <Svg width={RFValue(18)} height={RFValue(18)} viewBox="0 0 24 24">
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center'
   },
   textStyle: {
     textAlign: 'left',
