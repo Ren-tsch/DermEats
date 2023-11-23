@@ -14,6 +14,7 @@ import AddMenuToLibraryScreen from './screens/AddMenuToLibraryScreen';
 import CalendarScreen from './screens/CalendarScreen';
 import initializeDatabase from './database/database';
 import { CardStyleInterpolators } from '@react-navigation/stack';
+import { DateProvider } from './context/DateContext';
 import { Easing } from 'react-native';
 
 
@@ -37,39 +38,41 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="StartScreen"
-        screenOptions={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          transitionSpec: {
-            open: {
-              animation: 'timing',
-              config: {
-                duration: 500, // Dauer in Millisekunden
-                easing: Easing.out(Easing.poly(2)), // Easing-Funktion
+    <DateProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="StartScreen"
+          screenOptions={{
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Dauer in Millisekunden
+                  easing: Easing.out(Easing.poly(2)), // Easing-Funktion
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Gleiche Dauer für das Schließen
+                  easing: Easing.out(Easing.poly(2)),
+                },
               },
             },
-            close: {
-              animation: 'timing',
-              config: {
-                duration: 500, // Gleiche Dauer für das Schließen
-                easing: Easing.out(Easing.poly(2)),
-              },
-            },
-          },
-        }}
-      >
-        <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="SelectionScreen" component={SelectionScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="AddMealScreen" component={AddMealScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="AddSymptomScreen" component={AddSymptomScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="DatabaseMenuScreen" component={DatabaseMenuScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="FoodLibraryScreen" component={FoodLibraryScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="AddFoodToLibraryScreen" component={AddFoodToLibraryScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="MenuLibraryScreen" component={MenuLibraryScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="AddMenuToLibraryScreen" component={AddMenuToLibraryScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ headerShown: false }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+          }}
+        >
+          <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="SelectionScreen" component={SelectionScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="AddMealScreen" component={AddMealScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="AddSymptomScreen" component={AddSymptomScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="DatabaseMenuScreen" component={DatabaseMenuScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="FoodLibraryScreen" component={FoodLibraryScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="AddFoodToLibraryScreen" component={AddFoodToLibraryScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="MenuLibraryScreen" component={MenuLibraryScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="AddMenuToLibraryScreen" component={AddMenuToLibraryScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ headerShown: false }}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </DateProvider>
   );
 }

@@ -4,28 +4,34 @@ import { RFValue } from "react-native-responsive-fontsize";
 import LeftArrowButton from './LeftArrowButton';
 import RightArrowButton from './RightArrowButton';
 import colors from './colors';
+import { useDate } from '../context/DateContext';
 
 const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, calendarMode= false}) => {
-  // Erstelle ein neues Date-Objekt für das aktuelle Datum
-  const currentDate = new Date();
-  // Konfiguriere die Anzeigeoptionen für den Wochentag und das Datum
+  
+  const { currentDate, setCurrentDate } = useDate();
+
   const dayOptions = { weekday: 'short' };
   const dateOptions = { day: 'numeric', month: 'long' };
   const monthOptions = { month: 'long', year: 'numeric'}
-  
-  // Formatierung des Wochentags und des Datums entsprechend der lokalen Einstellungen
   const day = currentDate.toLocaleDateString(undefined, dayOptions).slice(0,2).toUpperCase();
   const date = currentDate.toLocaleDateString(undefined, dateOptions);
   const month = currentDate.toLocaleDateString(undefined, monthOptions);
 
   const handleLeftArrowClick = () => {
-    // Funktion für den Linken Pfeil
-    console.log("Linker Pfeil geklickt");
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() - 1);
+    setCurrentDate(newDate);
   };
 
   const handleRightArrowClick = () => {
-    // Funktion für den Rechten Pfeil
-    console.log("Rechter Pfeil geklickt");
+    const newDate = new Date(currentDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (newDate < today) {
+      newDate.setDate(newDate.getDate() + 1);
+      setCurrentDate(newDate);
+    }
   };
 
   const dateContainerStyles = [

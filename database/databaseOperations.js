@@ -2,71 +2,6 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('dermEats.db');
 
-// --------------------------------------Mahlzeiten------------------------------------
-
-// CREATE: Funktion zum Hinzufügen einer neuen Mahlzeit
-export const addMeal = (mealName, timestamp) => {
-    return new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                "INSERT INTO DailyLog (Timestamp, MealName) VALUES (?, ?)",
-                [timestamp, mealName],
-                (_, results) => resolve(results),
-                (_, error) => reject(error)
-            );
-        });
-    });
-};
-
-// READ: Funktion zum Abrufen aller Mahlzeiten
-export const getAllMeals = () => {
-    return new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                "SELECT * FROM DailyLog",
-                [],
-                (_, results) => {
-                    let meals = [];
-                    for (let i = 0; i < results.rows.length; i++) {
-                        meals.push(results.rows.item(i));
-                    }
-                    resolve(meals);
-                },
-                (_, error) => reject(error)
-            );
-        });
-    });
-};
-
-// UPDATE: Funktion zum Aktualisieren einer Mahlzeit
-export const updateMeal = (logId, mealName, timestamp) => {
-    return new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                "UPDATE DailyLog SET MealName = ?, Timestamp = ? WHERE LogID = ?",
-                [mealName, timestamp, logId],
-                (_, results) => resolve(results),
-                (_, error) => reject(error)
-            );
-        });
-    });
-};
-
-// DELETE: Funktion zum Löschen einer Mahlzeit
-export const deleteMeal = (logId) => {
-    return new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                "DELETE FROM DailyLog WHERE LogID = ?",
-                [logId],
-                (_, results) => resolve(results),
-                (_, error) => reject(error)
-            );
-        });
-    });
-};
-
-
 // --------------------------------------Lebensmittel------------------------------------
 
 // CREATE: Funktion zum Hinzufügen eines neuen Lebensmittels
@@ -234,6 +169,29 @@ export const getAllMenus = () => {
     });
 };
 
+//READ: Funktion zum Suchen eines Lebensmittels anhand des Namens
+export const searchMenuByName = (searchText) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT Name, MenuID FROM Menus WHERE Name LIKE ?",
+                [`%${searchText}%`],
+                (tx, results) => {
+                    let menus = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        let item = results.rows.item(i);
+                        menus.push({ id: item.MenuID, name: item.Name });
+                    }
+                    resolve(menus);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
 // UPDATE: Funktion zum Aktualisieren eines Menüs
 export const updateMenu = (logId, name) => {
     return new Promise((resolve, reject) => {
@@ -347,3 +305,210 @@ export const deleteMenuItem = (menuItemID, menuID) => {
         });
     });
 };
+
+
+// --------------------------------------DaiyliLog------------------------------------
+
+// CREATE: Funktion, um einen neuen Eintrag in DailyLog hinzuzufügen
+export const addDailyLog = (timestamp, mealName) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO DailyLog (Timestamp, MealName) VALUES (?, ?);",
+                [timestamp, mealName],
+                (tx, results) => {
+                    resolve(results.insertId);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// READ: Funktion um Details aus DailyLog anhand der LogID abzurufen
+export const getDailyLogDetailsById = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM DailyLog WHERE LogID = ?;",
+                [logID],
+                (tx, results) => {
+                    if (results.rows.length > 0) {
+                        resolve(results.rows.item(0));
+                    } else {
+                        resolve(null);
+                    }
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// UPDATE: Funktion um einen Eintrag in DailyLog zu aktualisieren
+export const updateDailyLog = (logID, timestamp, mealName) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "UPDATE DailyLog SET Timestamp = ?, MealName = ? WHERE LogID = ?;",
+                [timestamp, mealName, logID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// DELETE: Funktion um einen Eintrag in DailyLog zu löschen
+export const deleteDailyLog = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM DailyLog WHERE LogID = ?;",
+                [logID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+
+// --------------------------------------DailyLog_FoodItems------------------------------------
+
+// CREATE: Funktion, um einen neuen Eintrag in DailyLog_FoodItems hinzuzufügen
+export const addDailyLogFoodItem = (logID, foodID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO DailyLog_FoodItems (LogID, FoodID) VALUES (?, ?);",
+                [logID, foodID],
+                (tx, results) => {
+                    resolve(results.insertId);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// READ: Funktion um FoodItems für einen bestimmten LogID abzurufen
+export const getFoodItemsByLogId = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM DailyLog_FoodItems WHERE LogID = ?;",
+                [logID],
+                (tx, results) => {
+                    var len = results.rows.length;
+                    var foodItems = [];
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i);
+                        foodItems.push(row);
+                    }
+                    resolve(foodItems);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// DELETE: Funktion um einen Eintrag in DailyLog_FoodItems zu löschen
+export const deleteDailyLogFoodItem = (logID, foodID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM DailyLog_FoodItems WHERE LogID = ? AND FoodID = ?;",
+                [logID, foodID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+
+// --------------------------------------DailyLog_Menus------------------------------------
+
+// CREATE: Funktion, um einen neuen Eintrag in DailyLog_Menus hinzuzufügen
+export const addDailyLogMenu = (logID, menuID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO DailyLog_Menus (LogID, MenuID) VALUES (?, ?);",
+                [logID, menuID],
+                (tx, results) => {
+                    resolve(results.insertId);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// READ: Funktion um Menus für einen bestimmten LogID abzurufen
+export const getMenusByLogId = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM DailyLog_Menus WHERE LogID = ?;",
+                [logID],
+                (tx, results) => {
+                    var len = results.rows.length;
+                    var menus = [];
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i);
+                        menus.push(row);
+                    }
+                    resolve(menus);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// DELETE: Funktion um einen Eintrag in DailyLog_Menus zu löschen
+export const deleteDailyLogMenu = (logID, menuID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM DailyLog_Menus WHERE LogID = ? AND MenuID = ?;",
+                [logID, menuID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+

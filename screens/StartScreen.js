@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
 import NoLogsScreen from '../components/NoLogsScreen'

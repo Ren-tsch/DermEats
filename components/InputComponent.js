@@ -4,14 +4,14 @@ import TaskActionButton from './TaskActionButton';
 import Ingredients from './Ingredients';
 import { RFValue } from "react-native-responsive-fontsize";
 import colors from './colors';
-import { searchFoodItems } from '../database/databaseOperations';
+import { searchFoodItems, searchMenuByName} from '../database/databaseOperations';
 
-const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, onChangeText, textInputValue, textInputColor, backgroundColorSuggestions, onSelectFoodItem, showSuggestions= false, showButton= true, textAlignMiddle= false, textInputEditable = true}) => {
+const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, onChangeText, textInputValue, textInputColor, backgroundColorSuggestions, onSelectFoodItem, onSelectMenuItem, showSuggestions= false, showMenuSuggestion=false, showButton= true, textAlignMiddle= false}) => {
 
   const [suggestions, setSuggestions] = useState([]);
   const [isSuggestionSelected, setIsSuggestionSelected] = useState(false);
 
-  const MAX_FLATLIST_HEIGHT = RFValue(135);
+  const MAX_FLATLIST_HEIGHT = RFValue(95);
   const flatListHeight = Math.min(suggestions.length * RFValue(45), MAX_FLATLIST_HEIGHT);
 
   useEffect(() => {
@@ -22,7 +22,8 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
 
     const debounceId = setTimeout(() => {
       if (textInputValue) {
-        searchFoodItems(textInputValue)
+        if (!showMenuSuggestion) {
+          searchFoodItems(textInputValue)
           .then((foodItems) => {
             setSuggestions(foodItems);
           })
@@ -30,6 +31,17 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
             console.error("Fehler bei der Suche nach Lebensmitteln:", error);
             setSuggestions([]);
           });
+        }
+        if(showMenuSuggestion){
+          searchMenuByName(textInputValue)
+          .then((menuItems) => {
+            setSuggestions(menuItems);
+          })
+          .catch((error) => {
+            console.error("Fehler bei der Suche nach Menüs:", error);
+            setSuggestions([]);
+          });
+        }
       } else {
         setSuggestions([]);
       }
@@ -42,7 +54,13 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
     setSuggestions([]);
     onChangeText(suggestion.name);
     setIsSuggestionSelected(true);
-    onSelectFoodItem(suggestion.id);
+    if (!showMenuSuggestion) {
+      onSelectFoodItem(suggestion.id);
+    }
+    if (showMenuSuggestion) {
+      onSelectMenuItem(suggestion.id);
+    }
+    
   };
 
   return (
@@ -50,13 +68,11 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
       {showText && (
         <Text style={[styles.textStyle, {color: titleColor, textAlign: textAlignMiddle ? 'center' : 'left'}]}>{title}</Text>)}
         <TextInput
-          style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0), fontFamily: textInputEditable ? 'Inter_400Regular' : 'Inter_700Bold', color: textInputColor}]}
+          style={[styles.inputStyle, {borderColor: borderColor, marginBottom: showButton ? RFValue(10) : RFValue(0), color: textInputColor}]}
           onChangeText={onChangeText}
           placeholder= {placeholder}
           value={textInputValue}
           underlineColorAndroid="transparent"
-          editable={textInputEditable}
-          scrollEnabled={suggestions.length * RFValue(45) > MAX_FLATLIST_HEIGHT}
         />
         {showSuggestions &&(
           <FlatList style={[styles.flatList, { height: flatListHeight }]}
@@ -67,9 +83,8 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
             </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString()}
-          scrollEnabled={true}
+          scrollEnabled={false}
           keyboardShouldPersistTaps='handled'
-          persistentScrollbar={true}
           />
         )}
       {showButton && (
