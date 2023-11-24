@@ -133,6 +133,91 @@ export const updateMenuItemsBeforeFoodDeletion = (foodID) => {
 };
 
 
+// --------------------------------------Nicht-Katalogisierte-Lebensmittel------------------------------------
+
+// CREATE: Funktion zum Hinzufügen eines neuen nicht katalogisierten Lebensmittels
+export const addNonCataloguedFood = (dailyLogId, name) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO NonCataloguedFood (DailyLogID, Name) VALUES (?, ?)",
+                [dailyLogId, name],
+                (_, results) => resolve(results),
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+// READ: Funktion zum Abrufen aller nicht katalogisierten Lebensmittel
+export const getAllNonCataloguedFood = () => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM NonCataloguedFood",
+                [],
+                (_, results) => {
+                    let foods = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        foods.push(results.rows.item(i));
+                    }
+                    resolve(foods);
+                },
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+// READ: Funktion zum Abrufen eines nicht katalogisierten Lebensmittels anhand der DailyLogID
+export const getAllNonCataloguedFoodByDailyLogId = (dailyLogID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT Name FROM NonCataloguedFood WHERE DailyLogID = ?",
+                [dailyLogID],
+                (_, results) => {
+                    let foods = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        foods.push(results.rows.item(i));
+                    }
+                    resolve(foods);
+                },
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+// UPDATE: Funktion zum Aktualisieren eines nicht katalogisierten Lebensmittels
+export const updateNonCataloguedFood = (nonCataloguedFoodId, name) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "UPDATE NonCataloguedFood SET Name = ? WHERE NonCataloguedFoodID = ?",
+                [name, nonCataloguedFoodId],
+                (_, results) => resolve(results),
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+// DELETE: Funktion zum Löschen eines nicht katalogisierten Lebensmittels
+export const deleteNonCataloguedFood = (nonCataloguedFoodId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM NonCataloguedFood WHERE NonCataloguedFoodID = ?",
+                [nonCataloguedFoodId],
+                (_, results) => resolve(results),
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+
 // --------------------------------------Menüs------------------------------------
 
 // CREATE: Funktion zum Hinzufügen eines neuen Menüs
@@ -183,6 +268,28 @@ export const searchMenuByName = (searchText) => {
                         menus.push({ id: item.MenuID, name: item.Name });
                     }
                     resolve(menus);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+//READ: Funktion zum Suchen eines Lebensmittels anhand der MenuID
+export const searchMenuById = (menuID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT Name FROM Menus WHERE MenuID = ?",
+                [menuID],
+                (tx, results) => {
+                    if (results.rows.length > 0) {
+                        resolve(results.rows.item(0).Name);
+                    } else {
+                        resolve(null);
+                    }
                 },
                 (error) => {
                     reject(error);
@@ -349,6 +456,28 @@ export const getDailyLogDetailsById = (logID) => {
     });
 };
 
+// READ: Funktion um Details aus DailyLog anhand dem Timestamp (Datum) abzurufen
+export const getDailyLogDetailsByTimestamp = (timestamp) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM DailyLog WHERE Timestamp = ?",
+                [timestamp],
+                (tx, results) => {
+                    let logs = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        logs.push(results.rows.item(i));
+                    }
+                    resolve(logs);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
 // UPDATE: Funktion um einen Eintrag in DailyLog zu aktualisieren
 export const updateDailyLog = (logID, timestamp, mealName) => {
     return new Promise((resolve, reject) => {
@@ -407,7 +536,7 @@ export const addDailyLogFoodItem = (logID, foodID) => {
 };
 
 // READ: Funktion um FoodItems für einen bestimmten LogID abzurufen
-export const getFoodItemsByLogId = (logID) => {
+export const getDailyLogFoodItemsByLogId = (logID) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -470,7 +599,7 @@ export const addDailyLogMenu = (logID, menuID) => {
 };
 
 // READ: Funktion um Menus für einen bestimmten LogID abzurufen
-export const getMenusByLogId = (logID) => {
+export const getDayliLogMenusByLogId = (logID) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(

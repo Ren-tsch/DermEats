@@ -6,7 +6,7 @@ import RightArrowButton from './RightArrowButton';
 import colors from './colors';
 import { useDate } from '../context/DateContext';
 
-const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, calendarMode= false}) => {
+const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, onPushLeftArrow, onPushRightArrow, calendarMode= false}) => {
   
   const { currentDate, setCurrentDate } = useDate();
 
@@ -19,18 +19,25 @@ const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitl
 
   const handleLeftArrowClick = () => {
     const newDate = new Date(currentDate);
+    newDate.setUTCHours(0, 0, 0, 0);
     newDate.setDate(newDate.getDate() - 1);
     setCurrentDate(newDate);
+    console.log(newDate)
+    onPushLeftArrow()
   };
 
   const handleRightArrowClick = () => {
     const newDate = new Date(currentDate);
+    newDate.setUTCHours(0, 0, 0, 0);
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    console.log('today', today)
+    today.setUTCHours(0, 0, 0, 0);
+    console.log(newDate)
 
     if (newDate < today) {
       newDate.setDate(newDate.getDate() + 1);
       setCurrentDate(newDate);
+      onPushRightArrow()
     }
   };
 

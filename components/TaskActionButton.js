@@ -3,8 +3,8 @@ import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 
-const TaskActionButton = ({ onPress, title, buttonColor, textColor, showSymbol= true, alignMiddle= true, showSaveSymbol=false}) => (
-    <View style={[styles.buttonAlign, {alignSelf: alignMiddle ? 'center' : 'flex-start'}]}>
+const TaskActionButton = ({ onPress, title, buttonColor, textColor, showSymbol= true, alignMiddle= true, showSaveSymbol=false, isPlacedInIngContainer=false}) => (
+    <View style={[styles.buttonAlign, {alignSelf: alignMiddle ? 'center' : 'flex-start', marginTop: isPlacedInIngContainer ? RFValue(10) : 0}]}>
         <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: buttonColor, paddingLeft: showSymbol ? RFValue(10) : RFValue(15)}]} onPress={onPress}>
         {(showSymbol && !showSaveSymbol) && (
             <Svg width={RFValue(20)} height={RFValue(20)} viewBox="0 0 24 24">

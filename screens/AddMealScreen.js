@@ -12,7 +12,7 @@ import MealTypeSelector from '../components/MealTypeSelector';
 import { RFValue } from 'react-native-responsive-fontsize';
 import colors from '../components/colors';
 import Ingredients from '../components/Ingredients';
-import { addDailyLog, addDailyLogFoodItem, addDailyLogMenu, addFood, searchMenuByName } from '../database/databaseOperations';
+import { addDailyLog, addDailyLogFoodItem, addDailyLogMenu, searchMenuByName, addNonCataloguedFood, getDayliLogMenusByLogId, getDailyLogFoodItemsByLogId, getAllNonCataloguedFoodByDailyLogId, getDailyLogDetailsByTimestamp } from '../database/databaseOperations';
 import { useDate } from '../context/DateContext';
 
 
@@ -40,7 +40,7 @@ const AddMealScreen = () => {
         } else {
             setShowSaveButton(false)
         }
-    }), [mealIngredients]
+    },[mealIngredients])
 
     const AddIngredientsToSummary = async () => {
         const returnedMenuArray = await searchMenuByName(menuDescription)
@@ -105,8 +105,7 @@ const AddMealScreen = () => {
                 } if (mealIngredients[index].foodID != undefined) {
                     await addDailyLogFoodItem(dailyLogId, mealIngredients[index].foodID)
                 } if (mealIngredients[index].foodID == undefined && mealIngredients[index].foodName != ""){
-                   const newFoodId = await addFood(mealIngredients[index].foodName)
-                   await addDailyLogFoodItem(dailyLogId, newFoodId)
+                   await addNonCataloguedFood(dailyLogId, mealIngredients[index].foodName)
                 }     
             }
         } catch (error) {
@@ -165,7 +164,6 @@ const AddMealScreen = () => {
                     <FinishOrBackControl titleTaskButton={'Save'} colorTaskButton={mealInformation.Color} textColorTaskButton={colors.white} colorArrowButton={mealInformation.Color} showSaveSymbol={true} showTaskButton={showSaveButton} onPressArrowButton={navigateToSelectionScreen} onPressTaskButton={SaveMealToDatabase}/>
                     <MarginComponent marginBottom={15}/>
                 </View>
-                <Navbar/>
             </SafeAreaView>
         </SafeAreaProvider>
     );
