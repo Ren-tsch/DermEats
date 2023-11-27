@@ -3,7 +3,6 @@ import { ScrollView, View, StyleSheet, Alert, Keyboard } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Title from '../components/Title';
-import Navbar from '../components/Navbar';
 import InputComponent from '../components/InputComponent';
 import MarginComponent from '../components/MarginComponent';
 import IngredientContainer from '../components/IngredientContainer';
@@ -44,7 +43,10 @@ const AddMealScreen = () => {
 
     const AddIngredientsToSummary = async () => {
         const returnedMenuArray = await searchMenuByName(menuDescription)
-        if (returnedMenuArray.length < 1){
+
+        const exactMatch = returnedMenuArray.some(menu => menu.name === menuDescription);
+
+        if (!exactMatch && menuDescription){
             Alert.alert(
                 "Menu was not found",
                 "Please select a menu that is available in the database and appears in the drop-down list.",
@@ -93,11 +95,10 @@ const AddMealScreen = () => {
     }
 
     const SaveMealToDatabase = async () => {
-        const formattedDate = currentDate.toISOString().split('T')[0];
         const mealName = mealInformation.Meal
 
         try {
-            const dailyLogId = await addDailyLog(formattedDate, mealName);
+            const dailyLogId = await addDailyLog(currentDate, mealName);
             
             for (let index = 0; index < mealIngredients.length; index++) {
                 if (mealIngredients[index].menuID != undefined) {

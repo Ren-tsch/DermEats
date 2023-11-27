@@ -9,37 +9,32 @@ import { useDate } from '../context/DateContext';
 const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, onPushLeftArrow, onPushRightArrow, calendarMode= false}) => {
   
   const { currentDate, setCurrentDate } = useDate();
+  const dateObj = new Date(currentDate);
 
   const dayOptions = { weekday: 'short' };
   const dateOptions = { day: 'numeric', month: 'long' };
   const monthOptions = { month: 'long', year: 'numeric'}
-  const day = currentDate.toLocaleDateString(undefined, dayOptions).slice(0,2).toUpperCase();
-  const date = currentDate.toLocaleDateString(undefined, dateOptions);
-  const month = currentDate.toLocaleDateString(undefined, monthOptions);
+  const day = dateObj.toLocaleDateString(undefined, dayOptions).slice(0, 2).toUpperCase();
+  const date = dateObj.toLocaleDateString(undefined, dateOptions);
+  const month = dateObj.toLocaleDateString(undefined, monthOptions);
 
   const handleLeftArrowClick = () => {
     const newDate = new Date(currentDate);
-    newDate.setUTCHours(0, 0, 0, 0);
     newDate.setDate(newDate.getDate() - 1);
-    setCurrentDate(newDate);
-    console.log(newDate)
-    onPushLeftArrow()
-  };
+    setCurrentDate(newDate.toISOString().split('T')[0]);
+    onPushLeftArrow();
+};
 
-  const handleRightArrowClick = () => {
-    const newDate = new Date(currentDate);
-    newDate.setUTCHours(0, 0, 0, 0);
-    const today = new Date();
-    console.log('today', today)
-    today.setUTCHours(0, 0, 0, 0);
-    console.log(newDate)
+const handleRightArrowClick = () => {
+  const newDate = new Date(currentDate);
+  newDate.setDate(newDate.getDate() + 1);
 
-    if (newDate < today) {
-      newDate.setDate(newDate.getDate() + 1);
-      setCurrentDate(newDate);
-      onPushRightArrow()
-    }
-  };
+  const today = new Date();
+  if (newDate <= today) {
+      setCurrentDate(newDate.toISOString().split('T')[0]);
+      onPushRightArrow();
+  }
+};
 
   const dateContainerStyles = [
     styles.dateContainer,
@@ -94,11 +89,11 @@ const styles = StyleSheet.create({
   },
   dateContainer: {
     backgroundColor: colors.dermEatsColor,
-    width: '100%', // Setzt die Breite der Box auf die gesamte verfügbare Breite
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center', // Zentriert den Inhalt horizontal
-    padding: RFValue(10), // Fügt ein wenig Abstand innerhalb der Box hinzu
+    alignItems: 'center',
+    padding: RFValue(10),
     borderRadius: RFValue(16),
     minHeight: RFValue(64)
   },
@@ -106,13 +101,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayText: {
-    // Setze hier die gewünschten Styles für den Wochentag-Text
     fontFamily: 'Inter_400Regular',
     color: colors.white,
     fontSize: RFValue(14),
   },
   dateText: {
-    // Setze hier die gewünschten Styles für das Datum
     fontFamily: 'Inter_400Regular',
     color: colors.white,
     fontSize: RFValue(20),

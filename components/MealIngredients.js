@@ -1,7 +1,7 @@
 import React from 'react';
 import Ingredients from '../components/Ingredients';
 
-const MealIngredients = ({ items, backgroundColor, textColor, onPress }) => {
+const MealIngredients = ({ items, category, backgroundColor, textColor, onPress, showSvg }) => {
     if (!items || items.length === 0) {
         return null;
     }
@@ -12,7 +12,8 @@ const MealIngredients = ({ items, backgroundColor, textColor, onPress }) => {
             title={item.name || item.Name}
             backgroundColor={backgroundColor}
             textColor={textColor}
-            onPress={() => onPress ? onPress(index) : null}
+            onPress={() => onPress(index, category, item)}
+            showSvg={showSvg}
         />
     ));
 };

@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
   title: {
     fontFamily: 'Inter_900Black',

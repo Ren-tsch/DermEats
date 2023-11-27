@@ -203,13 +203,27 @@ export const updateNonCataloguedFood = (nonCataloguedFoodId, name) => {
     });
 };
 
-// DELETE: Funktion zum Löschen eines nicht katalogisierten Lebensmittels
+// DELETE: Funktion zum Löschen eines nicht katalogisierten Lebensmittels anhand des Namens
 export const deleteNonCataloguedFood = (nonCataloguedFoodId) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
                 "DELETE FROM NonCataloguedFood WHERE NonCataloguedFoodID = ?",
                 [nonCataloguedFoodId],
+                (_, results) => resolve(results),
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+// DELETE: Funktion zum Löschen eines nicht katalogisierten Lebensmittels anhand der DailyLogID und des Namen
+export const deleteNonCataloguedFoodByNameAndLogId = (dailyLogId, name) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM NonCataloguedFood WHERE DailyLogID = ? AND Name = ?",
+                [dailyLogId, name],
                 (_, results) => resolve(results),
                 (_, error) => reject(error)
             );
@@ -254,7 +268,7 @@ export const getAllMenus = () => {
     });
 };
 
-//READ: Funktion zum Suchen eines Lebensmittels anhand des Namens
+//READ: Funktion zum Suchen eines Menüs anhand des Namens
 export const searchMenuByName = (searchText) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
@@ -277,7 +291,7 @@ export const searchMenuByName = (searchText) => {
     });
 };
 
-//READ: Funktion zum Suchen eines Lebensmittels anhand der MenuID
+//READ: Funktion zum Suchen eines Menüs anhand der MenuID
 export const searchMenuById = (menuID) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
@@ -414,7 +428,7 @@ export const deleteMenuItem = (menuItemID, menuID) => {
 };
 
 
-// --------------------------------------DaiyliLog------------------------------------
+// --------------------------------------DailiLog------------------------------------
 
 // CREATE: Funktion, um einen neuen Eintrag in DailyLog hinzuzufügen
 export const addDailyLog = (timestamp, mealName) => {
@@ -641,3 +655,80 @@ export const deleteDailyLogMenu = (logID, menuID) => {
 };
 
 
+// --------------------------------------Symptoms------------------------------------
+
+// CREATE: Funktion, um ein neues Symptom hinzuzufügen
+export const addSymptom = (name, strength, date) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO Symptoms (Name, Strenght, Date) VALUES (?, ?, ?);",
+                [name, strength, date],
+                (tx, results) => {
+                    resolve(results.insertId);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// READ: Funktion, um alle Symptome abzurufen
+export const getSymptomsByDate = (date) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM Symptoms WHERE Date = ?;",
+                [date],
+                (tx, results) => {
+                    let symptoms = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        symptoms.push(results.rows.item(i));
+                    }
+                    resolve(symptoms);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// UPDATE: Funktion, um ein Symptom zu aktualisieren
+export const updateSymptom = (symptomID, name, strength, date) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "UPDATE Symptoms SET Name = ?, Strength = ?, Date = ? WHERE SymptomID = ?;",
+                [name, strength, date, symptomID],
+                (tx, results) => {
+                    resolve(results);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// DELETE: Funktion, um ein Symptom zu löschen
+export const deleteSymptom = (symptomID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM Symptoms WHERE SymptomID = ?;",
+                [symptomID],
+                (tx, results) => {
+                    resolve(results);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};

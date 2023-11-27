@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet, View, Keyboard, Alert } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Title from '../components/Title';
-import Navbar from '../components/Navbar'
 import MarginComponent from '../components/MarginComponent';
 import InputComponent from '../components/InputComponent';
 import SymptomIntensity from '../components/SymptomIntensity';
@@ -12,20 +11,24 @@ import Ingredients from '../components/Ingredients'
 import FinishOrBackControl from '../components/FinishOrBackControl';
 import { RFValue } from 'react-native-responsive-fontsize';
 import colors from '../components/colors';
+import { useDate } from '../context/DateContext';
+import { addSymptom } from '../database/databaseOperations';
 
 const AddSymptomScreen = () => {
 
+    const { currentDate } = useDate();
     const navigation = useNavigation();
 
     const [symptomDescription, setSymptomDescription] = useState('');
-    const [symptomIntensity, setSymptomIntensity] = useState(null);
+    const [symptomIntensity, setSymptomIntensity] = useState('');
     const [addedSymptoms, setAddedSymptoms] = useState([]);
 
     const AddSymptomToSummary = () => {
         if (symptomDescription && symptomIntensity !== null) {
             const newSymptom = {
-                Name: symptomDescription,
+                Name: symptomDescription.trimEnd(),
                 Strenght: symptomIntensity,
+                Date: currentDate,
             };
 
             setAddedSymptoms([...addedSymptoms, newSymptom])
@@ -49,6 +52,20 @@ const AddSymptomScreen = () => {
         newAddedSymptoms.splice(index, 1)
         setAddedSymptoms(newAddedSymptoms)
     }
+
+    const AddSymptomsToDatabase = async () => {
+        try {
+            for (let item of addedSymptoms) {
+                await addSymptom(item.Name, item.Strenght, item.Date);
+            }
+            setSymptomDescription('');
+            setSymptomIntensity('');
+            setAddedSymptoms([]);
+
+        } catch (error) {
+            console.error('Fehler beim Hinzufügen der Symptome:', error);
+        }
+    }
     
     const navigateToSelectionScreen = () => {
         navigation.navigate('SelectionScreen');
@@ -60,26 +77,28 @@ const AddSymptomScreen = () => {
                 <View style={styles.content}>
                     <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
                         <MarginComponent marginTop={10}/>
-                        <Title title={"Today's entries"} showArrows={false}/>
+                        <Title title={"Add symptom"} showArrows={false}/>
                         <MarginComponent marginTop={10}/>
                         <InputComponent title={'Symptom description'} placeholder={'Enter symptom'} onChangeText={setSymptomDescription} textInputValue={symptomDescription} showButton={false} borderColor={colors.symptom}/>
                         <MarginComponent marginTop={5}/>
                         <SymptomIntensity title={'Symptom intensity'} onPressAddButton={AddSymptomToSummary} activeSymptomButton={setSymptomIntensity}/>
                         <MarginComponent marginTop={10}/>
-                        <IngredientContainer title={'Summary'} showDelete={false} showEdit={false} showUnderline={false} titleColor={colors.black}/>
+                        {addedSymptoms.length > 0 && (
+                            <IngredientContainer title={'Symptoms'} fontSize={RFValue(22)} showDelete={false} showEdit={false} showUnderline={false} titleColor={colors.symptom}/>
+                        )}
                         <View style={styles.ingredientBox}>
                             {addedSymptoms.map((symptom, index) => {
                                 let backgroundColor;
                                 switch(symptom.Strenght) {
-                                    case 0:
+                                    case 'weak':
                                         backgroundColor = colors.symptomWeak;
                                         textColor = colors.white;
                                         break;
-                                    case 1:
+                                    case 'medium':
                                         backgroundColor = colors.symptomMiddle;
                                         textColor = colors.black;
                                         break;
-                                    case 2:
+                                    case 'strong':
                                         backgroundColor = colors.symptomStrong;
                                         textColor = colors.white;
                                         break;
@@ -97,10 +116,9 @@ const AddSymptomScreen = () => {
                             })}
                         </View>
                     </ScrollView>
-                    <FinishOrBackControl titleTaskButton={'Add to entries'} colorTaskButton={colors.symptom} textColorTaskButton={colors.white} colorArrowButton={colors.symptom} onPressArrowButton={navigateToSelectionScreen}/>
+                    <FinishOrBackControl titleTaskButton={'Save'} colorTaskButton={colors.symptom} textColorTaskButton={colors.white} colorArrowButton={colors.symptom} showSaveSymbol={true} showTaskButton={addedSymptoms.length > 0} onPressArrowButton={navigateToSelectionScreen} onPressTaskButton={AddSymptomsToDatabase}/>
                     <MarginComponent marginBottom={15}/> 
-                </View>
-                <Navbar/>     
+                </View>   
             </SafeAreaView>
         </SafeAreaProvider>
     );

@@ -9,12 +9,12 @@ const SymptomIntensity = ({ title, titleColor, onPressAddButton, activeSymptomBu
 
     const [activeButton, setActiveButton] = useState(null);
 
-    const handleButtonPress = (buttonIndex) => {
+    const handleButtonPress = (buttonIndex, symptomIntensity) => {
       setActiveButton(buttonIndex);
-      activeSymptomButton(buttonIndex);
+      activeSymptomButton(symptomIntensity);
     };
 
-    const activeButtonStyle = activeButton !== null ? { borderWidth: 3, borderColor: colors.black } : {};
+    const activeButtonStyle = activeButton !== null ? { borderWidth: 2, borderColor: colors.black, opacity: 1 } : {};
   
     return (
         <View style={styles.container}>
@@ -24,23 +24,23 @@ const SymptomIntensity = ({ title, titleColor, onPressAddButton, activeSymptomBu
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomWeak}, activeButton === 0 && activeButtonStyle]}
-                onPress={() => handleButtonPress(0)}
+                onPress={() => handleButtonPress(0, 'weak')}
                 />
                 <Text style={styles.symptomText}>weak</Text>
             </View>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomMiddle}, activeButton === 1 && activeButtonStyle]}
-                onPress={() => handleButtonPress(1)}
+                onPress={() => handleButtonPress(1, 'medium')}
                 />
-                <Text style={styles.symptomText}>middle</Text>
+                <Text style={styles.symptomText}>medium</Text>
             </View>
             <View style={styles.intensityContainer}>
                 <TouchableOpacity 
                 style={[styles.buttonStyle, {backgroundColor: colors.symptomStrong}, activeButton === 2 && activeButtonStyle]}
-                onPress={() => handleButtonPress(2)}
+                onPress={() => handleButtonPress(2, 'strong')}
                 />
-                <Text style={styles.symptomText}>hard</Text>
+                <Text style={styles.symptomText}>strong</Text>
           </View>
         </View>
         <MarginComponent marginBottom={10}/>
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     height: RFValue(30),
     padding: RFValue(10),
     borderRadius: 10000,
+    opacity: 0.3
   },
   symptomText: {
     fontFamily: 'Inter_700Bold',
