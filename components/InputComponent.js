@@ -6,14 +6,36 @@ import { RFValue } from "react-native-responsive-fontsize";
 import colors from './colors';
 import { searchFoodItems, searchMenuByName} from '../database/databaseOperations';
 
-const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, placeholder, title, titleColor, borderColor, onChangeText, textInputValue, textInputColor, backgroundColorSuggestions, onSelectFoodItem, onSelectMenuItem, showSuggestions= false, showMenuSuggestion=false, showButton= true, textAlignMiddle= false}) => {
+// InputComponent Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const InputComponent = ({
+  showText = true, // Steuert die Anzeige des Titeltextes
+  onActionPress, // Callback-Funktion für den Aktion-Button
+  actionButtonTitle, // Titel für den Aktion-Button
+  placeholder, // Platzhaltertext für den TextInput
+  title, // Titeltext
+  titleColor, // Farbe des Titeltextes
+  borderColor, // Farbe des Rands des TextInputs
+  onChangeText, // Callback-Funktion für Textänderungen
+  textInputValue, // Wert des TextInputs
+  textInputColor, // Farbe des Textes im TextInput
+  backgroundColorSuggestions, // Hintergrundfarbe der Vorschläge
+  onSelectFoodItem, // Callback-Funktion für die Auswahl eines Lebensmittel-Vorschlags
+  onSelectMenuItem, // Callback-Funktion für die Auswahl eines Menü-Vorschlags
+  showSuggestions= false, // Steuert die Anzeige der Vorschlagsliste
+  showMenuSuggestion=false, // Bestimmt, ob Menü-Vorschläge angezeigt werden sollen
+  showButton= true, // Steuert die Anzeige des Aktion-Buttons
+  textAlignMiddle= false // Bestimmt die Textausrichtung
+}) => {
 
+  // Lokaler State für Vorschläge
   const [suggestions, setSuggestions] = useState([]);
   const [isSuggestionSelected, setIsSuggestionSelected] = useState(false);
 
-  const MAX_FLATLIST_HEIGHT = RFValue(95);
+  // Maximale Höhe der FlatList
+  const MAX_FLATLIST_HEIGHT = RFValue(95); 
   const flatListHeight = Math.min(suggestions.length * RFValue(45), MAX_FLATLIST_HEIGHT);
 
+  // Logik für das Abrufen und Setzen von Vorschlägen
   useEffect(() => {
     if (isSuggestionSelected) {
       setIsSuggestionSelected(false);
@@ -50,6 +72,7 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
     return () => clearTimeout(debounceId);
   }, [textInputValue]);
 
+  // Logik für das Auswählen eines Vorschlags
   const handleSelectSuggestion = (suggestion) => {
     setSuggestions([]);
     onChangeText(suggestion.name);
@@ -63,6 +86,7 @@ const InputComponent = ({ showText = true, onActionPress, actionButtonTitle, pla
     
   };
 
+  // Styling der Komponente
   return (
     <View style={styles.container}>
       {showText && (

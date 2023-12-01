@@ -12,8 +12,9 @@ import colors from '../components/colors';
 
 const SelectionScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation(); // Hook für die Navigation innerhalb der App.
 
+    // Funktionen für die Navigation zu anderen Screens der App.
     const navigateToAddMeal = () => {
         navigation.navigate('AddMealScreen');
     };
@@ -48,6 +49,7 @@ const SelectionScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

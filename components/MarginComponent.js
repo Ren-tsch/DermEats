@@ -2,8 +2,15 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const MarginComponent = ({ marginTop = 0, marginRight = 0, marginBottom = 0, marginLeft = 0 }) => {
+// MealIngredients Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const MarginComponent = ({
+  marginTop = 0, // Oberer Randabstand
+  marginRight = 0, // Rechter Randabstand
+  marginBottom = 0, // Unterer Randabstand
+  marginLeft = 0 // Linker Randabstand
+}) => {
 
+  // Kombinierte Stildefinitionen für die Container-View
   const containerStyles = [
     styles.container,
     {
@@ -19,6 +26,8 @@ const MarginComponent = ({ marginTop = 0, marginRight = 0, marginBottom = 0, mar
   );
 };
 
+
+// Styling der Komponente
 const styles = StyleSheet.create({
   container: {
     

@@ -2,7 +2,12 @@ import React from 'react';
 import { Modal, View, StyleSheet } from 'react-native';
 import colors from './colors';
 
-const GenericModal = ({ isVisible, onClose, children }) => {
+// GenericModal Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const GenericModal = ({
+  isVisible, // Steuert die Sichtbarkeit des Modals
+  onClose, // Funktion, die bei Schließen des Modals aufgerufen wird
+  children // Kinder-Elemente, die im Modal angezeigt werden
+}) => {
   return (
     <Modal
       animationType="fade"
@@ -19,6 +24,7 @@ const GenericModal = ({ isVisible, onClose, children }) => {
   );
 };
 
+// Styling der Komponente
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

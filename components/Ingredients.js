@@ -4,7 +4,17 @@ import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 import colors from './colors';
 
-const Ingredients = ({ onPress, title, backgroundColor, textColor, onPressIngredient, isPressable=false, isActive, showSvg=true }) => {
+// Ingredients Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const Ingredients = ({
+    onPress, // Funktion, die bei Drücken des Haupt-Containers aufgerufen wird
+    title, // Titel des Inhaltsstoffes
+    backgroundColor, // Hintergrundfarbe des Containers
+    textColor, // Textfarbe
+    onPressIngredient, // Funktion, die bei Drücken des spezifischen Elements aufgerufen wird
+    isPressable = false, // Bestimmt, ob auf den Container gedrückt werden kann
+    isActive, // Zustand, ob das Element aktiv ist
+    showSvg = true // Steuert, ob das Lösch-Icon angezeigt wird
+  }) => {
 
     return (
     <View style={[styles.align]}>
@@ -38,6 +48,7 @@ const Ingredients = ({ onPress, title, backgroundColor, textColor, onPressIngred
     )
 };
 
+// Styling der Komponente
 const styles = StyleSheet.create({
     align: {
         alignItems: 'center',

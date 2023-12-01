@@ -22,35 +22,37 @@ import isEqual from 'lodash/isEqual';
 
 const StartScreen = () => {
 
-    const navigation = useNavigation();
-    const { currentDate } = useDate();
+    const navigation = useNavigation(); // Hook für die Navigation innerhalb der App.
+    const { currentDate } = useDate(); // Custom Hook aus dem DateContext, der das aktuelle Datum bereitstellt.
 
-    const [isLoading, setIsLoading] = useState(null)
-    const [noEntries, setNoEntries] = useState(true)
-    const [breakfastLogs, setBreakfastLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []})
-    const [lunchLogs, setLunchLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []})
-    const [dinnerLogs, setDinnerLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []})
-    const [todaysSymptoms, setTodaysSymptoms] = useState([])
-    const [snackLogs, setSnackLogs] = useState([])
-    const [editMeal, setEditMeal] = useState(false)
-    const [modalData, setModalData] = useState({nonCataloguedFood: [], foodItems: [], menus: []})
-    const [foodDescription, setFoodDescription] = useState('')
-    const [menuDescription, setMenuDescription] = useState('')
-    const [selectedFoodId, setSelectedFoodId] = useState()
-    const [selectedMenuId, setSelectedMenuId] = useState()
-    const [itemsToRemove, setItemsToRemove] = useState([])
-    const [itemsToAdd, setItemsToAdd] = useState([])
-    const [mealInformation, setMealInformation] = useState({})
+    const [isLoading, setIsLoading] = useState(null) // Verwaltet, ob Daten gerade geladen werden.
+    const [noEntries, setNoEntries] = useState(true) // Zeigt an, ob für den aktuellen Tag Einträge vorhanden sind.
+    const [breakfastLogs, setBreakfastLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []}) // Verwaltet Daten für das Frühstück.
+    const [lunchLogs, setLunchLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []}) // Verwaltet Daten für das Mittagessen.
+    const [dinnerLogs, setDinnerLogs] = useState({nonCataloguedFood: [], foodItems: [], menus: []}) // Verwaltet Daten für das Abendessen.
+    const [todaysSymptoms, setTodaysSymptoms] = useState([]) // Verwaltet Symptome für den aktuellen Tag.
+    const [snackLogs, setSnackLogs] = useState([]) // Verwaltet Snack-Daten.
+    const [editMeal, setEditMeal] = useState(false) // Verwaltet den Zustand, ob gerade eine Mahlzeit bearbeitet wird.
+    const [modalData, setModalData] = useState({nonCataloguedFood: [], foodItems: [], menus: []})  // Verwaltet Daten für das Modal, das zur Bearbeitung von Mahlzeiten verwendet wird.
+    const [foodDescription, setFoodDescription] = useState('')  // Verwaltet die Beschreibung des eingegebenen Textes im Lebensmittelinput.
+    const [menuDescription, setMenuDescription] = useState('') // Verwaltet die Beschreibung des eingegebenen Textes im Menuinput.
+    const [selectedFoodId, setSelectedFoodId] = useState() // Verwaltet die ID des ausgewählten Lebensmittels.
+    const [selectedMenuId, setSelectedMenuId] = useState() // Verwaltet die ID des ausgewählten Menüs.
+    const [itemsToRemove, setItemsToRemove] = useState([]) // Verwaltet die Elemente, die entfernt werden sollen.
+    const [itemsToAdd, setItemsToAdd] = useState([]) // Verwaltet die Elemente, die hinzugefügt werden sollen.
+    const [mealInformation, setMealInformation] = useState({}) // Verwaltet Informationen zur aktuellen Mahlzeit.
 
+    // Funktion zur Navigation zur 'SelectionScreen' Komponente.
     const navigateToSelectionScreen = () => {
         navigation.navigate('SelectionScreen');
     };
 
-
+    // useEffect Hook, um Daten bei Änderung des Datums oder des Bearbeitungsstatus neu zu laden.
     useEffect(() => {
         let isMounted = true;
         setIsLoading(true);
     
+        // Asynchrone Funktion, um die täglichen Log-Daten abzurufen und zu verarbeiten.
         const fetchEntry = async () => {
             if (!isMounted) return;
     
@@ -64,12 +66,14 @@ const StartScreen = () => {
                 }));
     
                 if (!isMounted) return;
-    
+                
+                // Temporäre Speicherung für Mahlzeiten-Logs.
                 let tempSnackLogs = [];
                 let tempBreakfastLog = {nonCataloguedFood: [], foodItems: [], menus: []};
                 let tempLunchLog = {nonCataloguedFood: [], foodItems: [], menus: []}
                 let tempDinnerLog = {nonCataloguedFood: [], foodItems: [], menus: []}
 
+            // Verteilung der Einträge auf die entsprechenden Mahlzeiten.
             enrichedEntries.forEach(entry => {
                 switch (entry.mealName) {
                     case 'Snack':
@@ -86,7 +90,8 @@ const StartScreen = () => {
                         break;
                 }
             });
-    
+
+                // Aktualisierung der State Hooks mit den neuen Daten.
                 if (isMounted) {
                     setSnackLogs(tempSnackLogs);
                     setBreakfastLogs(tempBreakfastLog)
@@ -94,6 +99,7 @@ const StartScreen = () => {
                     setDinnerLogs(tempDinnerLog)
                     setTodaysSymptoms(existingSymptoms);
 
+                    // Überprüfung, ob alle Arrays leer sind, um den noEntries State zu aktualisieren.
                     const entriesEmpty = areAllArraysEmpty({
                         breakfastLogs: tempBreakfastLog,
                         lunchLogs: tempLunchLog,
@@ -123,7 +129,7 @@ const StartScreen = () => {
 
 
     
-
+    // Funktion, um Einträge mit zusätzlichen Details anzureichern.
     const enrichEntryWithDetails = async (entry) => {
         const logID = entry.LogID;
         const mealName = entry.MealName;
@@ -144,6 +150,7 @@ const StartScreen = () => {
         return { logID, mealName, foodItems, menus, nonCataloguedFood };
     };
 
+    // Funktion, um zu überprüfen, ob alle Mahlzeiten- und Symptom-Arrays leer sind.
     const areAllArraysEmpty = (mealTimeLogs) => {
         return Object.values(mealTimeLogs).every(logs => {
             if (Array.isArray(logs)) {
@@ -154,6 +161,7 @@ const StartScreen = () => {
         });
     };
 
+    // Funktion, um den State zurückzusetzen, wenn der Pfeil gedrückt wird.
     const handleArrowPush = () => {
         setBreakfastLogs({nonCataloguedFood: [], foodItems: [], menus: []})
         setLunchLogs({nonCataloguedFood: [], foodItems: [], menus: []})
@@ -163,12 +171,14 @@ const StartScreen = () => {
         setNoEntries(false)
     }
 
+    // Funktion, um das Modal zum Bearbeiten oder Hinzufügen von Mahlzeiten zu öffnen.
     const openModal = (mealLogs) => {
         setModalData(mealLogs)
         setEditMeal(true)
         setMealInformation({LogID: mealLogs.logID, MealName: mealLogs.mealName})
     }
 
+    // Funktion, um das Bearbeitungsmodal zu schließen.
     const closeModal = () => {
         setEditMeal(false)
         setFoodDescription('')
@@ -190,6 +200,7 @@ const StartScreen = () => {
         setSelectedMenuId(id);
     }
 
+    // Funktion zum Hinzufügen von Zutaten zur Zusammenfassung im Modal.
     const AddIngredientsToSummary = async (logID, mealName) => {
         const newModalData = {
             ...modalData,
@@ -200,6 +211,7 @@ const StartScreen = () => {
         
         let newItemToAdd = null
 
+        // Logik zum Hinzufügen von nicht katalogisierten Lebensmitteln, Lebensmitteln oder Menüs basierend auf Benutzereingaben.
         if (!selectedFoodId && !selectedMenuId && (foodDescription)) {
             newItemToAdd = {Name: foodDescription}
             newModalData.nonCataloguedFood.push({Name: foodDescription})    
@@ -214,6 +226,7 @@ const StartScreen = () => {
             }    
         }
 
+        // Aktualisiert die Listen mit hinzuzufügenden und aktuellen Modal-Daten.
         if (newItemToAdd) {
             setItemsToAdd(prevItems => [...prevItems, newItemToAdd]);
         }
@@ -224,6 +237,7 @@ const StartScreen = () => {
         setSelectedMenuId()
     }
 
+    // Funktion zur Überprüfung, ob ein Menü in der Datenbank vorhanden ist.
     const searchForMenuInDatabase = async () => {
         const returnedMenuArray = await searchMenuByName(menuDescription);
         
@@ -245,6 +259,7 @@ const StartScreen = () => {
         }
     }
 
+    // Funktion zum Löschen einer Zutat aus der Zusammenfassung.
     const DeleteIngredientFromSummary = (index, mealName, item) => {
         const newModalData = {
             ...modalData,
@@ -259,6 +274,7 @@ const StartScreen = () => {
         setItemsToRemove(prevItems => [...prevItems, item]);
     }
 
+    // Funktion zum Aktualisieren der Datenbank basierend auf den Änderungen im Modal.
     const UpdateDatabase = async () => {
         const {added, removed} = findDifferences(itemsToRemove, itemsToAdd)
 
@@ -289,6 +305,7 @@ const StartScreen = () => {
         setMealInformation({})
     }
 
+    // Funktion zum Finden von Unterschieden zwischen zwei Arrays.
     const findDifferences = (array1, array2) => {
         const added = differenceWith(array2, array1, isEqual)
         const removed = differenceWith(array1, array2, isEqual)
@@ -296,6 +313,7 @@ const StartScreen = () => {
         return {added, removed}
     }
 
+    // Setzt die Modal-Farbe basierend auf der Mahlzeit.
     let modalColor;
     if (modalData) {
         modalColor = modalData.mealName === 'Breakfast'
@@ -421,6 +439,7 @@ const StartScreen = () => {
 
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

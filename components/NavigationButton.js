@@ -2,7 +2,13 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const NavigationButton = ({ onPress, title, buttonColor, textColor }) => (
+// NavigationButton Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const NavigationButton = ({ 
+    onPress, // Callback-Funktion, die beim Drücken des Buttons ausgelöst wird
+    title, // Text, der auf dem Button angezeigt wird
+    buttonColor, // Hintergrundfarbe des Buttons
+    textColor // Textfarbe des Buttons
+}) => (
 <View style={styles.buttonAlign}>
     <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: buttonColor }]} onPress={onPress}>
         <Text style={[styles.buttonText, { color: textColor}]}>{title}</Text>
@@ -10,6 +16,7 @@ const NavigationButton = ({ onPress, title, buttonColor, textColor }) => (
 </View>
 );
 
+// Styling der Komponente
 const styles = StyleSheet.create({
     buttonAlign: {
         alignItems: 'center',

@@ -3,10 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import colors from './colors';
 
-const MealTypeSelector = ({ title, titleColor, onPressedButton }) => {
+// MealTypeSelector Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const MealTypeSelector = ({ 
+  title, // Titel der Komponente
+  titleColor, // Farbe des Titels
+  onPressedButton // Callback-Funktion, die beim Drücken eines Buttons aufgerufen wird
+}) => {
 
-  const [buttonName, setButtonName] = useState([])
+  const [buttonName, setButtonName] = useState([]) // Lokaler State für den Namen des aktiven Buttons
 
+  // Funktion zum ermitteln welcher Button gedrückt wurde
   const handlePress = (button) => {
       switch (button) {
         case 'Breakfast':
@@ -52,6 +58,7 @@ const MealTypeSelector = ({ title, titleColor, onPressedButton }) => {
   );
 };
 
+// Styling der Komponente
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',

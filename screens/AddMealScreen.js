@@ -11,7 +11,7 @@ import MealTypeSelector from '../components/MealTypeSelector';
 import { RFValue } from 'react-native-responsive-fontsize';
 import colors from '../components/colors';
 import Ingredients from '../components/Ingredients';
-import { addDailyLog, addDailyLogFoodItem, addDailyLogMenu, searchMenuByName, addNonCataloguedFood, getDayliLogMenusByLogId, getDailyLogFoodItemsByLogId, getAllNonCataloguedFoodByDailyLogId, getDailyLogDetailsByTimestamp } from '../database/databaseOperations';
+import { addDailyLog, addDailyLogFoodItem, addDailyLogMenu, searchMenuByName, addNonCataloguedFood } from '../database/databaseOperations';
 import { useDate } from '../context/DateContext';
 
 
@@ -20,19 +20,21 @@ const AddMealScreen = () => {
     const navigation = useNavigation();
     const { currentDate } = useDate();
 
-    const [mealInformation, setMealInformation] = useState([])
-    const [mealSelected, setMealSelected] = useState(false)
-    const [foodDescription, setFoodDescription] = useState('')
-    const [menuDescription, setMenuDescription] = useState('')
-    const [selectedFoodId, setSelectedFoodId] = useState()
-    const [selectedMenuId, setSelectedMenuId] = useState()
-    const [mealIngredients, setMealIngredients] = useState([])
-    const [showSaveButton, setShowSaveButton] = useState(false)
+    const [mealInformation, setMealInformation] = useState([]) // Verwaltet Informationen über die aktuelle Mahlzeit.
+    const [mealSelected, setMealSelected] = useState(false) // Ein Boolescher Wert, der anzeigt, ob eine Mahlzeit ausgewählt wurde.
+    const [foodDescription, setFoodDescription] = useState('') // Speichert die Beschreibung des eingegebenen Lebensmittels.
+    const [menuDescription, setMenuDescription] = useState('') // Speichert die Beschreibung des eingegebenen Menüs.
+    const [selectedFoodId, setSelectedFoodId] = useState() // Speichert die ID des ausgewählten Lebensmittels.
+    const [selectedMenuId, setSelectedMenuId] = useState() // Speichert die ID des ausgewählten Menüs.
+    const [mealIngredients, setMealIngredients] = useState([]) // Verwaltet die Zutaten oder Elemente der Mahlzeit.
+    const [showSaveButton, setShowSaveButton] = useState(false) // Boolescher Wert, der steuert, ob der Speichern-Button angezeigt wird.
     
+    // Ermöglicht die Navigation zurück zum Auswahlbildschirm.
     const navigateToSelectionScreen = () => {
         navigation.navigate('SelectionScreen');
     };
 
+    // Steuert die Anzeige des Save Buttons
     useEffect(() => {
         if (mealIngredients.length > 0) {
             setShowSaveButton(true)
@@ -41,6 +43,7 @@ const AddMealScreen = () => {
         }
     },[mealIngredients])
 
+    // Funktion um Lebensmittel zur Zusammenfassung hinzuzufügen
     const AddIngredientsToSummary = async () => {
         const returnedMenuArray = await searchMenuByName(menuDescription)
 
@@ -88,12 +91,14 @@ const AddMealScreen = () => {
         Keyboard.dismiss();
     }
 
+    // Funktion um Lebensmittel aus der Zusammenfassung zu löschen
     const DeleteIngredientFromSummary = (index) => {
         const newMealIngredients = [...mealIngredients]
         newMealIngredients.splice(index,1)
         setMealIngredients(newMealIngredients)
     }
 
+    // Funktion um die Mahlzeit in die Datenbank zu speichern
     const SaveMealToDatabase = async () => {
         const mealName = mealInformation.Meal
 
@@ -170,6 +175,7 @@ const AddMealScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -48,7 +48,7 @@ const initializeDatabase = () => {
     // debugPrintTable("NonCataloguedFood");
     // debugPrintTable("DailyLog_FoodItems");
     // debugPrintTable("DailyLog_Menus");
-    // debugPrintTable("Menus")
+    //debugPrintTable("Menus") 
 };
 
 export default initializeDatabase;

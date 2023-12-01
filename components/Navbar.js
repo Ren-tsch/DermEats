@@ -5,24 +5,26 @@ import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 import colors from './colors';
 
+// Navbar Komponente
 const Navbar = () => {
 
-  const navigation = useNavigation();
+  const navigation = useNavigation(); // Hook von React Navigation für die Navigation
 
+  // Navigationsfunktionen
   const navigateToDatabase = () => {
-    navigation.navigate('DatabaseMenuScreen'); // Ersetze 'DatabaseScreen' mit dem Namen deines Screens
+    navigation.navigate('DatabaseMenuScreen');
   };
 
   const navigateToStartScreen = () => {
-    navigation.navigate('StartScreen'); // Ersetze 'EntriesScreen' mit dem Namen deines Screens
+    navigation.navigate('StartScreen');
   };
 
   const navigateToAdd = () => {
-    navigation.navigate('SelectionScreen'); // Ersetze 'AddScreen' mit dem Namen deines Screens
+    navigation.navigate('SelectionScreen');
   };
 
   const navigateToCalendar = () => {
-    navigation.navigate('CalendarScreen'); // Ersetze 'CalendarScreen' mit dem Namen deines Screens
+    navigation.navigate('CalendarScreen');
   };
 
   return (
@@ -52,13 +54,14 @@ const Navbar = () => {
   );
 };
 
+// Styling der Komponente
 const styles = StyleSheet.create({
   navbarContainer: {
     backgroundColor: colors.dermEatsColor,
     width: '100%',
-    height: RFValue(70), // Höhe des Navbar Containers
+    height: RFValue(70),
     flexDirection: 'row',
-    justifyContent: 'space-evenly', // Gleichmäßiger Abstand der Icons
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   buttons: {

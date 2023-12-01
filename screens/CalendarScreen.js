@@ -12,9 +12,9 @@ import colors from '../components/colors';
 
 const CalendarScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation(); //Hook für die Navigation innerhalb der App.
     
-    const navigateToStartScreen = () => {
+    const navigateToStartScreen = () => { // Navigationsfunktion zum StartScreen.
         navigation.navigate('StartScreen');
     };
 
@@ -37,6 +37,7 @@ const CalendarScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

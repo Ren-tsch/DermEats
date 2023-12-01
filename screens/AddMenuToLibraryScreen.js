@@ -17,13 +17,14 @@ const AddMenuToLibraryScreen = () => {
 
     const navigation = useNavigation();
 
-    const [menuDescription, setMenuDescription] = useState('')
-    const [foodDescription, setFoodDescription] = useState('')
-    const [menuIngredients, setMenuIngredients] = useState([])
-    const [editMenuName, setEditMenuName] = useState(true)
-    const [showChangeMenuName, setShowChangeMenuName] = useState(false)
-    const [selectedFoodId, setSelectedFoodId] = useState(null);
+    const [menuDescription, setMenuDescription] = useState('') // Verwaltet die Beschreibung des eingegebenen Textes im Menüinput.
+    const [foodDescription, setFoodDescription] = useState('') // Verwaltet die Beschreibung des eingegebenen Textes im Lebensmittelinput.
+    const [menuIngredients, setMenuIngredients] = useState([]) // Liste der Zutaten für das Menü.
+    const [editMenuName, setEditMenuName] = useState(true) // Verwaltet die Darstellung des Menüinputs
+    const [showChangeMenuName, setShowChangeMenuName] = useState(false) // Verwaltet den Zustand des Bearbeitungbutton des Menüs
+    const [selectedFoodId, setSelectedFoodId] = useState(null); // Verwaltet die Ausgewählte Lebensmittel-ID
 
+    // Funktion um neue Lebensmittel zur Zusammenfassung hinzuzufügen
     const AddMenuIngredientsToSummary = () => {
         if (menuDescription && foodDescription !== '') {
             const newIngredient = {
@@ -55,7 +56,7 @@ const AddMenuToLibraryScreen = () => {
     }
 
     
-
+    // Funktion um den Menünamen anzupassen
     const EditMenuName = () => {
         if (menuDescription !== '') {
             setEditMenuName(!editMenuName)
@@ -73,6 +74,7 @@ const AddMenuToLibraryScreen = () => {
         
     }
 
+    // Funktion um Lebensmittel aus dem Menü zu löschen
     const DeleteIngredientFromSummary = (index) => {
         const newMenuIngredients = [...menuIngredients]
         newMenuIngredients.splice(index,1)
@@ -84,6 +86,7 @@ const AddMenuToLibraryScreen = () => {
         setSelectedFoodId(id);
     };
 
+    // Funktion zur Navigation zum DatabaseMenuScreen
     const navigateToDatabaseMenuScreen = () => {
         navigation.navigate('DatabaseMenuScreen');
     };
@@ -160,6 +163,7 @@ const AddMenuToLibraryScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

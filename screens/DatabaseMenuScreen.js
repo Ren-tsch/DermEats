@@ -12,8 +12,9 @@ import colors from '../components/colors';
 
 const DatabaseMenuScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation(); // Hook für die Navigation innerhalb der App.
 
+    // Navigationsfunktionen zu verschiedenen Bildschirmen der Datenbankverwaltung.
     const navigateToStartScreen = () => {
         navigation.navigate('StartScreen');
     };
@@ -56,6 +57,7 @@ const DatabaseMenuScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

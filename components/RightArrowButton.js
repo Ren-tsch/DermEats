@@ -3,7 +3,12 @@ import Svg, { Path } from 'react-native-svg';
 import { TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const RightArrowButton = ({ onPress, fillColor, hasPadding = true }) => {
+// RightArrowButton Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const RightArrowButton = ({ 
+  onPress, // Callback-Funktion, die beim Drücken des Buttons aufgerufen wird
+  fillColor, // Farbe des Pfeil-Icons
+  hasPadding = true // Bestimmt, ob der Button einen Innenabstand haben soll
+}) => {
   return (
     <TouchableOpacity onPress={onPress} style={[{padding: hasPadding ? RFValue(10) : RFValue(0)}]}>
       <Svg width={RFValue(24)} height={RFValue(24)} viewBox="0 0 24 24">

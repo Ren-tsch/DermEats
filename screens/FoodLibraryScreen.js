@@ -16,13 +16,14 @@ import { getAllFood, deleteFood, updateFood } from '../database/databaseOperatio
 
 const FoodLibraryScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation(); // Hook für die Navigation innerhalb der App.
 
-    const [foodsDatabase, setFoodsDatabase] = useState([]);
-    const [selectedFoodID, setSelectedFoodID] = useState(null);
-    const [editIngredient, setEditIngredient] = useState(false);
-    const [selectedFoodName, setSelectedFoodName] = useState("");
+    const [foodsDatabase, setFoodsDatabase] = useState([]); // Verwaltet die Liste der Lebensmittel.
+    const [selectedFoodID, setSelectedFoodID] = useState(null); // Speichert die ID des ausgewählten Lebensmittels.
+    const [editIngredient, setEditIngredient] = useState(false); // Steuert, ob das Bearbeitungsmodal geöffnet ist.
+    const [selectedFoodName, setSelectedFoodName] = useState(""); // Speichert den Namen des ausgewählten Lebensmittels.
 
+    // useEffect Hook, um die Lebensmitteldaten beim Laden der Komponente abzurufen.
     useEffect(() => {
         getAllFood().then(foods => {
             setFoodsDatabase(foods)
@@ -32,6 +33,7 @@ const FoodLibraryScreen = () => {
         });
     }, [editIngredient])
 
+    // Funktion zum Löschen eines Lebensmittels aus der Datenbank.
     const DeleteFoodFromDatabase = async (foodID) => {
         const updatedFoodDatabase = foodsDatabase.filter(food => food.FoodID !== foodID);
     
@@ -43,10 +45,12 @@ const FoodLibraryScreen = () => {
         });
     }
 
+    // Funktion zum Auswählen eines Lebensmittels.
     const handleSelectIngredient = (foodID) => {
         setSelectedFoodID(selectedFood => selectedFood === foodID ? null : foodID);
     };
 
+    // Funktion zum Öffnen des Bearbeitungsmodals.
     const OpenModal = () => {
         if (selectedFoodID !== null) {
             setEditIngredient(true)
@@ -57,17 +61,20 @@ const FoodLibraryScreen = () => {
         }
     }
 
+    // Funktion zum Schließen des Bearbeitungsmodals.
     const CloseModal = () => {
         setEditIngredient(false)
         setSelectedFoodID(null)
     }
 
+    // Funktion zum Aktualisieren eines Lebensmittels in der Datenbank.
     const UpdateFoodInDatabase = async () => {
         await updateFood(selectedFoodID, selectedFoodName)
         setSelectedFoodID(null)
         CloseModal()
     }
 
+    // Navigationsfunktionen zu anderen Bildschirmen.
     const navigateToDatabaseMenuScreen = () => {
         navigation.navigate('DatabaseMenuScreen');
     };
@@ -119,6 +126,7 @@ const FoodLibraryScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

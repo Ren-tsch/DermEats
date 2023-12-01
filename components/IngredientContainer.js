@@ -3,7 +3,17 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 
-const IngredientContainer = ({ onPressDelete, onPressEdit, title, titleColor, fontSize, showUnderline=true, showDelete=true, showEdit=true}) => {
+// IngredientContainer Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const IngredientContainer = ({ 
+  onPressDelete, // Funktion, die beim Drücken des Lösch-Buttons aufgerufen wird
+  onPressEdit, // Funktion, die beim Drücken des Bearbeiten-Buttons aufgerufen wird
+  title, // Titeltext des Containers
+  titleColor, // Farbe des Titeltextes
+  fontSize, // Schriftgrösse des Titels
+  showUnderline = true, // Steuert, ob eine Unterstreichung angezeigt wird
+  showDelete = true, // Steuert, ob der Lösch-Button angezeigt wird
+  showEdit = true // Steuert, ob der Bearbeiten-Button angezeigt wird
+}) => {
 
   return (
     <>
@@ -38,6 +48,7 @@ const IngredientContainer = ({ onPressDelete, onPressEdit, title, titleColor, fo
   );
 };
 
+// Styling der Komponent
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

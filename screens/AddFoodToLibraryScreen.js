@@ -16,10 +16,10 @@ import { addFood} from '../database/databaseOperations';
 
 const AddFoodToLibraryScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation(); // Navigations Hook
 
-    const [foodDescription, setFoodDescription] = useState('')
-    const [addedFood, setAddedFood] = useState([])
+    const [foodDescription, setFoodDescription] = useState('') // Verwaltet die Beschreibung des eingegebenen Lebensmittels.
+    const [addedFood, setAddedFood] = useState([]) // Speichert eine Liste der hinzugefügten Lebensmittel.
 
     const AddFoodToSummary = () => {
         if (foodDescription !== '') {
@@ -42,16 +42,19 @@ const AddFoodToLibraryScreen = () => {
         Keyboard.dismiss();
     }
 
+    // Funktion zum entfernen von Lebensmittel aus der Zusammenfassung
     const DeleteFoodFromSummary = (index, deleteCount) => {
         const newAddedFood = [...addedFood]
         newAddedFood.splice(index, deleteCount)
         setAddedFood(newAddedFood)
     }
 
+    // Ermöglicht die Navigation zurück zum Datenbankmenü.
     const navigateToDatabaseMenuScreen = () => {
         navigation.navigate('DatabaseMenuScreen');
     };
 
+    // Funktion zum hinzufügen von Lebensmitteln zur Datenbank
     const addFoodToDatabase = async () => {
         for (const element of addedFood) {
             await addFood(element.Name);
@@ -95,6 +98,7 @@ const AddFoodToLibraryScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

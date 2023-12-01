@@ -16,13 +16,14 @@ import { addSymptom } from '../database/databaseOperations';
 
 const AddSymptomScreen = () => {
 
-    const { currentDate } = useDate();
-    const navigation = useNavigation();
+    const { currentDate } = useDate(); // Hook aus dem DateContext für das aktuelle Datum.
+    const navigation = useNavigation(); // Navigation Hook.
 
-    const [symptomDescription, setSymptomDescription] = useState('');
-    const [symptomIntensity, setSymptomIntensity] = useState('');
-    const [addedSymptoms, setAddedSymptoms] = useState([]);
+    const [symptomDescription, setSymptomDescription] = useState(''); // Verwaltet die Beschreibung des Symptoms.
+    const [symptomIntensity, setSymptomIntensity] = useState(''); // Verwaltet die Intensität des Symptoms.
+    const [addedSymptoms, setAddedSymptoms] = useState([]); // Liste der hinzugefügten Symptome.
 
+    // Funktion, um ein Symptom zur Zusammenfassungsliste hinzuzufügen.
     const AddSymptomToSummary = () => {
         if (symptomDescription && symptomIntensity !== null) {
             const newSymptom = {
@@ -47,12 +48,14 @@ const AddSymptomScreen = () => {
         Keyboard.dismiss();
     };
 
+     // Funktion, um ein Symptom aus der Zusammenfassungsliste zu entfernen.
     const DeleteSymptomFromSummary = (index) => {
         const newAddedSymptoms = [...addedSymptoms]
         newAddedSymptoms.splice(index, 1)
         setAddedSymptoms(newAddedSymptoms)
     }
 
+    // Funktion, um die erfassten Symptome in die Datenbank zu übertragen.
     const AddSymptomsToDatabase = async () => {
         try {
             for (let item of addedSymptoms) {
@@ -67,6 +70,7 @@ const AddSymptomScreen = () => {
         }
     }
     
+    // Funktion zur Navigation zum SelectionScreen.
     const navigateToSelectionScreen = () => {
         navigation.navigate('SelectionScreen');
     };
@@ -124,6 +128,7 @@ const AddSymptomScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

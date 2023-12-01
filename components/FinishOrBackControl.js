@@ -4,7 +4,18 @@ import { RFValue } from "react-native-responsive-fontsize";
 import TaskActionButton from './TaskActionButton';
 import LeftArrowButton from './LeftArrowButton';
 
-const FinishOrBackControl = ({ onPressArrowButton, onPressTaskButton, colorArrowButton, colorTaskButton, titleTaskButton, textColorTaskButton, showSymbolTaskButton=true, showTaskButton=true, showSaveSymbol}) => (
+// FinishOrBackControl Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const FinishOrBackControl = ({
+    onPressArrowButton, // Funktion, die beim Drücken des Pfeil-Buttons aufgerufen wird
+    onPressTaskButton, // Funktion, die beim Drücken des Task-Buttons aufgerufen wird
+    colorArrowButton, // Farbe des Pfeil-Buttons
+    colorTaskButton, // Farbe des Task-Buttons
+    titleTaskButton, // Titel des Task-Buttons
+    textColorTaskButton, // Textfarbe des Task-Buttons
+    showSymbolTaskButton = true, // Bestimmt, ob ein Symbol beim Task-Button angezeigt wird
+    showTaskButton = true, // Steuert die Anzeige des Task-Buttons
+    showSaveSymbol // Bestimmt, ob das Speichern-Symbol beim Task-Button angezeigt wird
+  }) => (
     <View style={styles.container}>
         <LeftArrowButton onPress={onPressArrowButton} fillColor={colorArrowButton} hasPadding={false} changeSize={true} adjustedSize={28}/>
         {showTaskButton && (
@@ -17,6 +28,7 @@ const FinishOrBackControl = ({ onPressArrowButton, onPressTaskButton, colorArrow
     </View>
 );
 
+// Styling der Komponente
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',

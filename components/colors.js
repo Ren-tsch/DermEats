@@ -1,3 +1,4 @@
+// Zentrale Definition aller Farben
 const colors = {
     dermEatsColor: '#568D31',
     lightBackground: '#E7F4E8',

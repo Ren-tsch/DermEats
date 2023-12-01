@@ -3,33 +3,36 @@ import { Calendar } from 'react-native-calendars';
 import colors from './colors';
 import moment from 'moment';
 
-const CalendarComponent = ({ onDaySelect, mealsAndSymptoms }) => {
-    const [markedDates, setMarkedDates] = useState({});
+// CalendarComponent Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const CalendarComponent = ({ 
+    onDaySelect, // Callback-Funktion, die bei der Auswahl eines Tages aufgerufen wird
+    mealsAndSymptoms // Daten über Mahlzeiten und Symptome
+  }) => {
+    const [markedDates, setMarkedDates] = useState({}); // Lokaler State für markierte Tage
   
+    // Konfiguration für Markierungen
     const mealAdded = { key: 'meal added', color: colors.food };
     const symptomAdded = { key: 'symptom added', color: colors.symptom };
   
+    // useEffekt zum Aktualisieren der markierten Tage und einfügen von Einträgeinformationen
     useEffect(() => {
         const newMarkedDates = {};
-        const today = moment().format('YYYY-MM-DD'); // Heutiges Datum im Format 'YYYY-MM-DD'
+        const today = moment().format('YYYY-MM-DD');
     
-        // Markiere den heutigen Tag
         newMarkedDates[today] = {
             selected: true,
             selectedColor: colors.lightBackground,
             selectedTextColor: colors.dermEatsColor,
             dots: []
         };
-    
-        // Gehe durch die Liste der Mahlzeiten und Symptome
+
         if (mealsAndSymptoms && mealsAndSymptoms.length > 0) {
             mealsAndSymptoms.forEach(item => {
-                const { date, meal, symptom } = item; // Annahme: Jedes Element hat ein 'date' und ein 'type'
+                const { date, meal, symptom } = item;
                 if (!newMarkedDates[date]) {
                 newMarkedDates[date] = { dots: [] };
                 }
                 
-                // Füge entsprechend den Typ hinzu (meal oder symptom)
                 if (meal === true) {
                 newMarkedDates[date].dots.push(mealAdded);
                 } if (symptom === true) {
@@ -44,12 +47,10 @@ const CalendarComponent = ({ onDaySelect, mealsAndSymptoms }) => {
     return (
         <Calendar
         onDayPress={onDaySelect}
-        //theme={calenderTheme}
         markingType={'multi-dot'}
         markedDates={markedDates}
         hideArrows={true}
         renderHeader={(date) => {
-            // Du kannst hier auch eine leere View zurückgeben, wenn du einen Platzhalter möchtest
             return null;
         }}
         />

@@ -6,18 +6,34 @@ import RightArrowButton from './RightArrowButton';
 import colors from './colors';
 import { useDate } from '../context/DateContext';
 
-const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitle = false, subtitleText, subtitleTextColor, onPushLeftArrow, onPushRightArrow, calendarMode= false}) => {
+// Titel-Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const Title = ({
+  title, // Der Haupttitel der Komponente
+  showDateContainer = true, // Steuert die Anzeige des Datumscontainers
+  showArrows = true, // Bestimmt, ob Navigationspfeile angezeigt werden sollen
+  showSubtitle = false, // Schalter für die Anzeige eines Untertitels
+  subtitleText, // Text des Untertitels
+  subtitleTextColor, // Farbe des Untertiteltextes
+  onPushLeftArrow, // Funktion, die beim Drücken des linken Pfeils aufgerufen wird
+  onPushRightArrow, // Funktion, die beim Drücken des rechten Pfeils aufgerufen wird
+  calendarMode = false // Modus für die Anzeige des Datums (Tag oder Monat)
+}) => {
   
+  // Verwendung des Datums aus dem DateContext
   const { currentDate, setCurrentDate } = useDate();
   const dateObj = new Date(currentDate);
 
+  // Optionen zur Formatierung des Datums
   const dayOptions = { weekday: 'short' };
   const dateOptions = { day: 'numeric', month: 'long' };
   const monthOptions = { month: 'long', year: 'numeric'}
+
+  // Formatierung des aktuellen Datums
   const day = dateObj.toLocaleDateString(undefined, dayOptions).slice(0, 2).toUpperCase();
   const date = dateObj.toLocaleDateString(undefined, dateOptions);
   const month = dateObj.toLocaleDateString(undefined, monthOptions);
 
+  // Funktion für den Klick auf den linken Pfeil
   const handleLeftArrowClick = () => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -25,6 +41,7 @@ const Title = ({ title, showDateContainer = true, showArrows = true, showSubtitl
     onPushLeftArrow();
 };
 
+// Funktion für den Klick auf den rechten Pfeil
 const handleRightArrowClick = () => {
   const newDate = new Date(currentDate);
   newDate.setDate(newDate.getDate() + 1);
@@ -36,11 +53,13 @@ const handleRightArrowClick = () => {
   }
 };
 
+  // Stil für den Datum-Container
   const dateContainerStyles = [
     styles.dateContainer,
     !showArrows && { justifyContent: 'center'},
   ];
 
+  // Rendering der Titel-Komponente
   return (
     <View>
       <View style={styles.titleContainer}>
@@ -74,6 +93,7 @@ const handleRightArrowClick = () => {
   );
 };
 
+// Styles für die Komponente
 const styles = StyleSheet.create({
   titleContainer: {
     marginBottom: RFValue(8),

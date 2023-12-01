@@ -35,13 +35,18 @@ const MenuLibraryScreen = () => {
 
     // Effekt zum Laden aller Menüs aus der Datenbank beim Start der Komponente.
     useEffect(() => {
+        LoadMenusFromDatabase()
+    }, [editIngredient, menuDatabase])
+
+    // Funktion zum Laden der Menüs aus der Datenbank.
+    const LoadMenusFromDatabase = async () => {
         getAllMenus().then(menus => {
             setMenuDatabase(menus)
         })
         .catch(error => {
             console.error('Fehler beim Laden der Datenbank:', error);
         });
-    }, [editIngredient])
+    }
 
     // Funktion zum Löschen eines Menüs aus der Datenbank.
     const DeleteMenuFromDatabase = async (menuID) => {
@@ -224,6 +229,7 @@ const MenuLibraryScreen = () => {
     );
 };
 
+// Styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -236,7 +242,6 @@ const styles = StyleSheet.create({
     ingredientBox: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        maxHeight: RFValue(180),
     },
     ingredientBoxModal: {
         flexDirection: 'row',

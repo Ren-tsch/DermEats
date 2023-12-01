@@ -3,7 +3,17 @@ import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import Svg, { Path } from 'react-native-svg';
 
-const TaskActionButton = ({ onPress, title, buttonColor, textColor, showSymbol= true, alignMiddle= true, showSaveSymbol=false, isPlacedInIngContainer=false}) => (
+// TaskActionButton Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const TaskActionButton = ({
+    onPress, // Funktion, die beim Drücken der Schaltfläche aufgerufen wird
+    title, // Text, der auf der Schaltfläche angezeigt wird
+    buttonColor, // Hintergrundfarbe der Schaltfläche
+    textColor, // Textfarbe
+    showSymbol = true, // Ob ein Symbol angezeigt werden soll
+    alignMiddle = true, // Ob die Schaltfläche zentriert sein soll
+    showSaveSymbol = false, // Ob das Speichern-Symbol angezeigt werden soll
+    isPlacedInIngContainer = false // Spezielle Platzierung für bestimmte Container
+}) => (
     <View style={[styles.buttonAlign, {alignSelf: alignMiddle ? 'center' : 'flex-start', marginTop: isPlacedInIngContainer ? RFValue(10) : 0}]}>
         <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: buttonColor, paddingLeft: showSymbol ? RFValue(10) : RFValue(15)}]} onPress={onPress}>
         {(showSymbol && !showSaveSymbol) && (
@@ -21,6 +31,7 @@ const TaskActionButton = ({ onPress, title, buttonColor, textColor, showSymbol= 
     </View>
 );
 
+// Styling für die Komponente
 const styles = StyleSheet.create({
     buttonAlign: {
         alignItems: 'center',

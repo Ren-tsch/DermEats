@@ -3,7 +3,14 @@ import Svg, { Path } from 'react-native-svg';
 import { TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 
-const LeftArrowButton = ({ onPress, fillColor, hasPadding = true, changeSize = false, adjustedSize }) => {
+// LeftArrowButton Komponente mit verschiedenen konfigurierbaren Eigenschaften
+const LeftArrowButton = ({ 
+  onPress, // Callback-Funktion, die beim Drücken des Buttons aufgerufen wird
+  fillColor, // Farbe des Pfeil-Icons
+  hasPadding = true, // Bestimmt, ob der Button einen Innenabstand haben soll
+  changeSize = false, // Steuert, ob die Größe des Buttons verändert werden soll
+  adjustedSize // Angepasste Größe des Buttons, falls changeSize true ist
+}) => {
   return (
     <TouchableOpacity onPress={onPress} style={[{padding: hasPadding ? RFValue(10) : RFValue(0)}]}>
       <Svg style={[{ width: changeSize ? RFValue(adjustedSize) : RFValue(24), height: changeSize ? RFValue(adjustedSize) : RFValue(24)}]} viewBox="0 0 24 24">

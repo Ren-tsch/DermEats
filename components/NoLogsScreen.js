@@ -6,7 +6,10 @@ import colors from './colors';
 import MarginComponent from './MarginComponent';
 import dermEatsLogo from '../assets/logo.png';
 
-const NoLogsScreen = ({ onAddPress}) => {
+// NoLogsScreen Komponente
+const NoLogsScreen = ({ 
+  onAddPress // Callback-Funktion, die beim Drücken des + Buttons aufgerufen wird
+}) => {
   return (
     <View style={styles.container}>
         <Text style={styles.title}>Nothing here</Text>
@@ -30,6 +33,7 @@ const NoLogsScreen = ({ onAddPress}) => {
   );
 };
 
+// Styling der Komponente
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
