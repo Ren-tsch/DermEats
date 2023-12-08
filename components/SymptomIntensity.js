@@ -10,7 +10,8 @@ const SymptomIntensity = ({
   title, // Der Titel der Komponente
   titleColor, // Farbe des Titels
   onPressAddButton, // Funktion, die beim Drücken des 'Add symptom'-Buttons aufgerufen wird
-  activeSymptomButton // Funktion, die bei der Auswahl einer Symptomintensität aufgerufen wird
+  activeSymptomButton, // Funktion, die bei der Auswahl einer Symptomintensität aufgerufen wird
+  showButton = true, // Steuert die Anzeige des Aktion-Buttons
 }) => {
 
   // Lokaler State für den aktiven Button
@@ -53,7 +54,9 @@ const SymptomIntensity = ({
         </View>
       </View>
       <MarginComponent marginBottom={10}/>
+      {showButton && (
       <TaskActionButton textColor={colors.white} title={'Add symptom'} buttonColor={colors.black} alignMiddle={false} onPress={onPressAddButton}/>
+      )}
     </View>
   );
 };

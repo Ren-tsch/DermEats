@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { ScrollView, View, StyleSheet, Alert, Keyboard } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -28,6 +28,7 @@ const AddMealScreen = () => {
     const [selectedMenuId, setSelectedMenuId] = useState() // Speichert die ID des ausgewählten Menüs.
     const [mealIngredients, setMealIngredients] = useState([]) // Verwaltet die Zutaten oder Elemente der Mahlzeit.
     const [showSaveButton, setShowSaveButton] = useState(false) // Boolescher Wert, der steuert, ob der Speichern-Button angezeigt wird.
+    const resetMealTime = useRef(false)
     
     // Ermöglicht die Navigation zurück zum Auswahlbildschirm.
     const navigateToSelectionScreen = () => {
@@ -101,6 +102,7 @@ const AddMealScreen = () => {
     // Funktion um die Mahlzeit in die Datenbank zu speichern
     const SaveMealToDatabase = async () => {
         const mealName = mealInformation.Meal
+        resetMealTime.current = !resetMealTime.current
 
         try {
             const dailyLogId = await addDailyLog(currentDate, mealName);
@@ -141,7 +143,7 @@ const AddMealScreen = () => {
                     <Title title={"Add meal"} showArrows={false}/>
                     <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
                         <MarginComponent marginTop={10}/>
-                        <MealTypeSelector title={'Meal time'} onPressedButton={(mealInfo) => {setMealInformation(mealInfo), setMealSelected(true)}}/>
+                        <MealTypeSelector title={'Meal time'} onPressedButton={(mealInfo) => {setMealInformation(mealInfo), setMealSelected(true)}} resetTrigger={resetMealTime.current}/>
                         <MarginComponent marginTop={5}/>
                         <View>
                             <InputComponent title={'Food'} placeholder={'Search for food / add new food'} textInputValue={foodDescription} onChangeText={setFoodDescription} backgroundColorSuggestions={colors.food} showButton={true} actionButtonTitle={'Add food'} titleColor={colors.food} borderColor={colors.food} showSuggestions={true} onSelectFoodItem={handleSelectFoodItem} onActionPress={AddIngredientsToSummary}/>

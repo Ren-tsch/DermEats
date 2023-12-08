@@ -1,4 +1,6 @@
 import * as SQLite from 'expo-sqlite';
+import foodItems from './data/foodItems.json';
+import { insertFoodItemsFromJson } from './databaseOperations';
 
 const db = SQLite.openDatabase('dermEats.db');
 
@@ -13,42 +15,32 @@ const initializeDatabase = () => {
         tx.executeSql("CREATE TABLE IF NOT EXISTS Symptoms (SymptomID INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR, Strenght VARCHAR, Date DATETIME);");
         tx.executeSql("CREATE TABLE IF NOT EXISTS MenuItems (MenuItemID INTEGER PRIMARY KEY AUTOINCREMENT, MenuID INTEGER, FoodID INTEGER, FoodName VARCHAR, FOREIGN KEY (MenuID) REFERENCES Menus (MenuID), FOREIGN KEY (FoodID) REFERENCES FoodItems (FoodID));");
 
-        // Lösche alle Einträge aus den Tabellen
+        // Löschen alle Einträge aus den Tabellen
         // tx.executeSql("DELETE FROM DailyLog;");
+        // tx.executeSql('DELETE FROM NonCataloguedFood;');
         // tx.executeSql("DELETE FROM DailyLog_FoodItems;");
         // tx.executeSql("DELETE FROM DailyLog_Menus;");
-        // tx.executeSql('DELETE FROM NonCataloguedFood;')
-
-
-        // db.transaction(tx => {
-        //     tx.executeSql("DROP TABLE IF EXISTS Symptoms;", [], (tx, results) => {
-        //         console.log("Tabelle Symptoms erfolgreich gelöscht");
-        //     }, (error) => {
-        //         console.error("Fehler beim Löschen der Tabelle Symptoms:", error);
-        //     });
-        // });
+        // tx.executeSql('DELETE FROM FoodItems;')
+        // tx.executeSql('DELETE FROM Menus')
+        // tx.executeSql('DELETE FROM Symptoms')
+        // tx.executeSql('DELETE FROM MenuItems')
 
     }, (error) => {
         console.error("Fehler bei der Datenbanktransaktion:", error);
     }, () => {
         console.log("Datenbank erfolgreich initialisiert");
+        insertFoodItemsFromJson(foodItems);
     });
 
-    function debugPrintTable(tableName) {
-        db.transaction(tx => {
-            tx.executeSql(`SELECT * FROM ${tableName};`, [], (_, { rows }) => {
-                console.log(`Inhalte der Tabelle ${tableName}:`, JSON.stringify(rows));
-            });
-        }, (error) => {
-            console.error(`Fehler beim Auslesen der Tabelle ${tableName}:`, error);
-        });
-    }
-
-    // debugPrintTable("DailyLog");
-    // debugPrintTable("NonCataloguedFood");
-    // debugPrintTable("DailyLog_FoodItems");
-    // debugPrintTable("DailyLog_Menus");
-    //debugPrintTable("Menus") 
+    // function debugPrintTable(tableName) {
+    //     db.transaction(tx => {
+    //         tx.executeSql(`SELECT * FROM ${tableName};`, [], (_, { rows }) => {
+    //             console.log(`Inhalte der Tabelle ${tableName}:`, JSON.stringify(rows));
+    //         });
+    //     }, (error) => {
+    //         console.error(`Fehler beim Auslesen der Tabelle ${tableName}:`, error);
+    //     });
+    // }
 };
 
 export default initializeDatabase;

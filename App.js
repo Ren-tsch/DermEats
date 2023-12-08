@@ -12,6 +12,7 @@ import MenuLibraryScreen from './screens/MenuLibraryScreen';
 import AddFoodToLibraryScreen from './screens/AddFoodToLibraryScreen';
 import AddMenuToLibraryScreen from './screens/AddMenuToLibraryScreen';
 import CalendarScreen from './screens/CalendarScreen';
+import AllergyInfoScreen from './screens/AllergyInfoScreen'
 import initializeDatabase from './database/database';
 import { CardStyleInterpolators } from '@react-navigation/stack';
 import { DateProvider } from './context/DateContext';
@@ -71,6 +72,7 @@ export default function App() {
           <Stack.Screen name="MenuLibraryScreen" component={MenuLibraryScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="AddMenuToLibraryScreen" component={AddMenuToLibraryScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="AllergyInfoScreen" component={AllergyInfoScreen} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </DateProvider>

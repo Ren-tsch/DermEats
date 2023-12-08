@@ -6,7 +6,7 @@ import moment from 'moment';
 // CalendarComponent Komponente mit verschiedenen konfigurierbaren Eigenschaften
 const CalendarComponent = ({ 
     onDaySelect, // Callback-Funktion, die bei der Auswahl eines Tages aufgerufen wird
-    mealsAndSymptoms // Daten über Mahlzeiten und Symptome
+    symptomsDate // Daten über Mahlzeiten und Symptome
   }) => {
     const [markedDates, setMarkedDates] = useState({}); // Lokaler State für markierte Tage
   
@@ -26,23 +26,17 @@ const CalendarComponent = ({
             dots: []
         };
 
-        if (mealsAndSymptoms && mealsAndSymptoms.length > 0) {
-            mealsAndSymptoms.forEach(item => {
-                const { date, meal, symptom } = item;
+        if (symptomsDate && symptomsDate.length > 0) {
+            symptomsDate.forEach(item => {
+                const { date } = item;
                 if (!newMarkedDates[date]) {
                 newMarkedDates[date] = { dots: [] };
-                }
-                
-                if (meal === true) {
-                newMarkedDates[date].dots.push(mealAdded);
-                } if (symptom === true) {
-                newMarkedDates[date].dots.push(symptomAdded);
                 }
             });
         }     
     
         setMarkedDates(newMarkedDates);
-    }, [mealsAndSymptoms]);
+    }, [symptomsDate]);
 
     return (
         <Calendar

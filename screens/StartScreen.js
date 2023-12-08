@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { View, StyleSheet, ScrollView, Alert, Text } from 'react-native';
 import NoLogsScreen from '../components/NoLogsScreen'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Title from '../components/Title';
@@ -9,7 +9,7 @@ import MarginComponent from '../components/MarginComponent';
 import LoadingScreen from '../components/LoadingScreen';
 import { RFValue } from 'react-native-responsive-fontsize';
 import colors from '../components/colors';
-import { getAllNonCataloguedFoodByDailyLogId, getDailyLogDetailsByTimestamp, getDailyLogFoodItemsByLogId, getDayliLogMenusByLogId, getFoodNameById, searchMenuById, getSymptomsByDate, searchMenuByName, addDailyLogFoodItem, addDailyLogMenu, addNonCataloguedFood, deleteDailyLogFoodItem, deleteDailyLogMenu, deleteNonCataloguedFoodByNameAndLogId } from '../database/databaseOperations';
+import { getAllNonCataloguedFoodByDailyLogId, getDailyLogDetailsByTimestamp, getDailyLogFoodItemsByLogId, getDayliLogMenusByLogId, getFoodNameById, searchMenuById, getSymptomsByDate, searchMenuByName, addDailyLogFoodItem, addDailyLogMenu, addNonCataloguedFood, deleteDailyLogFoodItem, deleteDailyLogMenu, deleteNonCataloguedFoodByNameAndLogId, addSymptom, deleteSymptom, deleteDailyLogMenuByID, deleteDailyLogFoodItemByID, deleteNonCataloguedFoodByLogId, deleteDailyLog, deleteSymptomsByDate } from '../database/databaseOperations';
 import { useDate } from '../context/DateContext';
 import IngredientContainer from '../components/IngredientContainer';
 import MealIngredients from '../components/MealIngredients'
@@ -17,6 +17,7 @@ import Ingredients from '../components/Ingredients';
 import GenericModal from '../components/GenericModal'
 import FinishOrBackControl from '../components/FinishOrBackControl';
 import InputComponent from '../components/InputComponent';
+import SymptomIntensity from '../components/SymptomIntensity'
 import differenceWith from 'lodash/differenceWith';
 import isEqual from 'lodash/isEqual';
 
@@ -41,91 +42,108 @@ const StartScreen = () => {
     const [itemsToRemove, setItemsToRemove] = useState([]) // Verwaltet die Elemente, die entfernt werden sollen.
     const [itemsToAdd, setItemsToAdd] = useState([]) // Verwaltet die Elemente, die hinzugefügt werden sollen.
     const [mealInformation, setMealInformation] = useState({}) // Verwaltet Informationen zur aktuellen Mahlzeit.
+    const [editSymptoms, setEditSymptoms] = useState(false) // Verwaltet den Zustand, ob die Symptome bearbeitet werden.
+    const [symptomDescription, setSymptomDescription] = useState('') // Verwaltet die Beschreibung des eingegebenen Textes im Symptominput.
+    const [symptomIntensity, setSymptomIntensity] = useState('') // Verwaltet die Intensität des Symptoms.
+    const [symptomModalData, setSymptomModalData] = useState([]) // Verwaltet Daten für das Modal, das zur Bearbeitung von Symptomen verwendet wird.
+    const [openModalToDelete, setOpenModalToDelete] = useState(false) // Verwaltet den Zustand, ob das Delete Modal geöffnet werden soll.
+    const [selectedLogToDelete, setSelectedLogToDelete] = useState(false) // Verwaltet die LogID der Mahlzeiten- oder das Datum der Symptomeinträge um diese zu löschen.
+    const [reloadSite, setReloadSite] = useState(true) // Verwaltet den Zustand, wann die Seite neu gerendert werden soll.
 
     // Funktion zur Navigation zur 'SelectionScreen' Komponente.
     const navigateToSelectionScreen = () => {
         navigation.navigate('SelectionScreen');
     };
 
+    // useFocusEffect Hook, der ausgeführt wird, wenn der Bildschirm fokussiert wird. 
+    useFocusEffect(
+        useCallback(() => {
+            setReloadSite(prevState => !prevState);
+        }, [])
+    );
+
     // useEffect Hook, um Daten bei Änderung des Datums oder des Bearbeitungsstatus neu zu laden.
     useEffect(() => {
         let isMounted = true;
-        setIsLoading(true);
-    
-        // Asynchrone Funktion, um die täglichen Log-Daten abzurufen und zu verarbeiten.
-        const fetchEntry = async () => {
-            if (!isMounted) return;
-    
-            try {
-                const existingEntry = await getDailyLogDetailsByTimestamp(currentDate);
-                const existingSymptoms = await getSymptomsByDate(currentDate);
-    
-                const enrichedEntries = await Promise.all(existingEntry.map(async (entry) => {
-                    if (!isMounted) return;
-                    return await enrichEntryWithDetails(entry);
-                }));
-    
+        if (!editMeal || reloadSite) {
+        setIsLoading(true);       
+
+            // Asynchrone Funktion, um die täglichen Log-Daten abzurufen und zu verarbeiten.
+            const fetchEntry = async () => {
                 if (!isMounted) return;
+        
+                try {
+                    const existingEntry = await getDailyLogDetailsByTimestamp(currentDate);
+                    const existingSymptoms = await getSymptomsByDate(currentDate);
+        
+                    const enrichedEntries = await Promise.all(existingEntry.map(async (entry) => {
+                        if (!isMounted) return;
+                        return await enrichEntryWithDetails(entry);
+                    }));
+        
+                    if (!isMounted) return;
+                    
+                    // Temporäre Speicherung für Mahlzeiten-Logs.
+                    let tempSnackLogs = [];
+                    let tempBreakfastLog = {nonCataloguedFood: [], foodItems: [], menus: []};
+                    let tempLunchLog = {nonCataloguedFood: [], foodItems: [], menus: []}
+                    let tempDinnerLog = {nonCataloguedFood: [], foodItems: [], menus: []}
+
+                // Verteilung der Einträge auf die entsprechenden Mahlzeiten.
+                enrichedEntries.forEach(entry => {
+                    switch (entry.mealName) {
+                        case 'Snack':
+                            tempSnackLogs.push(entry);
+                            break;
+                        case 'Breakfast':
+                            tempBreakfastLog = entry;
+                            break;
+                        case 'Lunch':
+                            tempLunchLog = entry;
+                            break;
+                        case 'Dinner':
+                            tempDinnerLog = entry;
+                            break;
+                    }
+                });
+
+                    // Aktualisierung der State Hooks mit den neuen Daten.
+                    if (isMounted) {
+                        setSnackLogs(tempSnackLogs);
+                        setBreakfastLogs(tempBreakfastLog)
+                        setLunchLogs(tempLunchLog)
+                        setDinnerLogs(tempDinnerLog)
+                        setTodaysSymptoms(existingSymptoms);
+
+                        // Überprüfung, ob alle Arrays leer sind, um den noEntries State zu aktualisieren.
+                        const entriesEmpty = areAllArraysEmpty({
+                            breakfastLogs: tempBreakfastLog,
+                            lunchLogs: tempLunchLog,
+                            dinnerLogs: tempDinnerLog,
+                            snackLogs: tempSnackLogs,
+                            todaysSymptoms: existingSymptoms
+                        });
+                    
+                        setNoEntries(entriesEmpty);
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen der DailyLog-Einträge:", error);
+                } finally {
+                    if (isMounted) {
+                        setIsLoading(false);
+                    }
+                }
                 
-                // Temporäre Speicherung für Mahlzeiten-Logs.
-                let tempSnackLogs = [];
-                let tempBreakfastLog = {nonCataloguedFood: [], foodItems: [], menus: []};
-                let tempLunchLog = {nonCataloguedFood: [], foodItems: [], menus: []}
-                let tempDinnerLog = {nonCataloguedFood: [], foodItems: [], menus: []}
-
-            // Verteilung der Einträge auf die entsprechenden Mahlzeiten.
-            enrichedEntries.forEach(entry => {
-                switch (entry.mealName) {
-                    case 'Snack':
-                        tempSnackLogs.push(entry);
-                        break;
-                    case 'Breakfast':
-                        tempBreakfastLog = entry;
-                        break;
-                    case 'Lunch':
-                        tempLunchLog = entry;
-                        break;
-                    case 'Dinner':
-                        tempDinnerLog = entry;
-                        break;
-                }
-            });
-
-                // Aktualisierung der State Hooks mit den neuen Daten.
-                if (isMounted) {
-                    setSnackLogs(tempSnackLogs);
-                    setBreakfastLogs(tempBreakfastLog)
-                    setLunchLogs(tempLunchLog)
-                    setDinnerLogs(tempDinnerLog)
-                    setTodaysSymptoms(existingSymptoms);
-
-                    // Überprüfung, ob alle Arrays leer sind, um den noEntries State zu aktualisieren.
-                    const entriesEmpty = areAllArraysEmpty({
-                        breakfastLogs: tempBreakfastLog,
-                        lunchLogs: tempLunchLog,
-                        dinnerLogs: tempDinnerLog,
-                        snackLogs: tempSnackLogs,
-                        todaysSymptoms: existingSymptoms
-                    });
-                
-                    setNoEntries(entriesEmpty);
-                }
-            } catch (error) {
-                console.error("Fehler beim Abrufen der DailyLog-Einträge:", error);
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            }
-            
-        };
-    
-        fetchEntry();
-    
-        return () => {
-            isMounted = false;
-        };
-    }, [currentDate, editMeal]);
+            };
+        
+            fetchEntry();
+            setReloadSite(false)
+        
+            return () => {
+                isMounted = false;
+            };
+        }
+    }, [reloadSite]);
 
 
     
@@ -169,6 +187,7 @@ const StartScreen = () => {
         setSnackLogs([])
         setTodaysSymptoms([])
         setNoEntries(false)
+        setReloadSite(true)
     }
 
     // Funktion, um das Modal zum Bearbeiten oder Hinzufügen von Mahlzeiten zu öffnen.
@@ -181,6 +200,7 @@ const StartScreen = () => {
     // Funktion, um das Bearbeitungsmodal zu schließen.
     const closeModal = () => {
         setEditMeal(false)
+        setEditSymptoms(false)
         setFoodDescription('')
         setMenuDescription('')
         setSelectedFoodId()
@@ -188,6 +208,9 @@ const StartScreen = () => {
         setModalData({nonCataloguedFood: [], foodItems: [], menus: []})
         setItemsToAdd([])
         setItemsToRemove([])
+        setSymptomModalData([])
+        setOpenModalToDelete(false)
+        setReloadSite(true)
     }
 
     // Speichert die ID des ausgewählten Lebensmittels aus dem InputComponent im GenericModal
@@ -313,6 +336,77 @@ const StartScreen = () => {
         return {added, removed}
     }
 
+    // Funktion zum Öffnen des Symptom-Modals.
+    const openSymptomModal = () => {
+        setEditSymptoms(true)
+        setSymptomModalData(todaysSymptoms)
+    }
+
+    // Funktion um ein Symptom im Modal zur Zusammenfassung hinzuzufügen.
+    const addSymptomToSummary = () => {
+        const newSymptomModalData = [...symptomModalData]
+        newSymptomModalData.push({Name: symptomDescription, Strenght: symptomIntensity})
+        setSymptomModalData(newSymptomModalData)
+        setSymptomDescription('')
+    }
+
+    // Funktion um ein Symptom im Modal aus der Zusammenfassung zu entfernen.
+    const deleteSymptomFromSummary = (index) => {
+        const newSymptomModalData = [...symptomModalData]
+        newSymptomModalData.splice(index, 1)
+        setSymptomModalData(newSymptomModalData)
+    }
+
+    // Funktion zum Aktualisieren der Symptomdatenbank basierend auf den Änderungen im Modal.
+    const updateSymptomDatabase = async () => {
+        const {added, removed} = findDifferences(todaysSymptoms, symptomModalData)
+
+        if (added.length > 0) {
+            for (let index = 0; index < added.length; index++) {
+                await addSymptom(added[index].Name, added[index].Strenght, currentDate )
+            }   
+        }
+
+        if (removed.length > 0) {
+            for (let index = 0; index < removed.length; index++) {
+                await deleteSymptom(removed[index].SymptomID)
+            }
+        }
+
+        closeModal()
+    }
+
+    // Funktion um das Modal für den Löschvorgang einer Mahlzeit- oder eines Symptomeintrages zu öffnen
+    const openDeleteModal = (log) => {
+        setSelectedLogToDelete(log)
+        setOpenModalToDelete(true)
+    }
+
+    // Funktion um einen Mahlzeiten- oder Symptomeintrag zu löschen
+    const deleteEntry = async () => {
+        const isDateValid = (dateString) => {
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+            return regex.test(dateString);
+        };
+    
+        try {
+            if (Number.isInteger(selectedLogToDelete.logID)) {
+                await deleteDailyLogMenuByID(selectedLogToDelete.logID);
+                await deleteDailyLogFoodItemByID(selectedLogToDelete.logID);
+                await deleteNonCataloguedFoodByLogId(selectedLogToDelete.logID);
+                await deleteDailyLog(selectedLogToDelete.logID);
+                closeModal()
+            }
+            else if (isDateValid(selectedLogToDelete)) {
+                await deleteSymptomsByDate(selectedLogToDelete);
+                closeModal()
+            }
+        } catch (error) {
+            console.error('Fehler beim Löschen des Eintrags:', error);
+        }
+        
+    };
+
     // Setzt die Modal-Farbe basierend auf der Mahlzeit.
     let modalColor;
     if (modalData) {
@@ -323,7 +417,20 @@ const StartScreen = () => {
         : modalData.mealName === 'Dinner'
         ? colors.dinner
         : colors.snack
-}
+    }
+
+    // Setzt die Modal-Textfarbe basierend auf der zu löschenden Mahlzeit oder des Symptoms.
+    const getColorByType = (type) => {
+        const colors = {
+            undefined: '#ED3241',
+            Breakfast: '#568D6D',
+            Lunch: '#31848D',
+            Dinner: '#8D568B',
+            Snack: '#8D8C56',
+        };
+      
+        return colors[type];
+      };
 
     return (
     <SafeAreaProvider>
@@ -342,7 +449,7 @@ const StartScreen = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {!(areAllArraysEmpty(breakfastLogs)) && (
                         <>
-                            <IngredientContainer title={breakfastLogs.mealName} titleColor={colors.breakfast} fontSize={RFValue(22)} onPressEdit={() => openModal(breakfastLogs)}/>
+                            <IngredientContainer title={breakfastLogs.mealName} titleColor={colors.breakfast} fontSize={RFValue(22)} onPressEdit={() => openModal(breakfastLogs)} onPressDelete={() => openDeleteModal(breakfastLogs)}/>
                             <MarginComponent marginBottom={5}/>
                             <View style={styles.ingredientBox}>                   
                                 <MealIngredients items={breakfastLogs.nonCataloguedFood} backgroundColor={colors.breakfast} textColor={colors.white} showSvg={false}/>
@@ -354,7 +461,7 @@ const StartScreen = () => {
                     )}
                     {!(areAllArraysEmpty(lunchLogs)) && (
                         <>
-                            <IngredientContainer title={lunchLogs.mealName} titleColor={colors.lunch} fontSize={RFValue(22)} onPressEdit={() => openModal(lunchLogs)}/>
+                            <IngredientContainer title={lunchLogs.mealName} titleColor={colors.lunch} fontSize={RFValue(22)} onPressEdit={() => openModal(lunchLogs)} onPressDelete={() => openDeleteModal(lunchLogs)}/>
                             <MarginComponent marginBottom={5}/>
                             <View style={styles.ingredientBox}>                   
                                 <MealIngredients items={lunchLogs.nonCataloguedFood} backgroundColor={colors.lunch} textColor={colors.white} showSvg={false}/>
@@ -366,7 +473,7 @@ const StartScreen = () => {
                     )}
                     {!(areAllArraysEmpty(dinnerLogs)) && (
                         <>
-                            <IngredientContainer title={dinnerLogs.mealName} titleColor={colors.dinner} fontSize={RFValue(22)} onPressEdit={() => openModal(dinnerLogs)}/>
+                            <IngredientContainer title={dinnerLogs.mealName} titleColor={colors.dinner} fontSize={RFValue(22)} onPressEdit={() => openModal(dinnerLogs)} onPressDelete={() => openDeleteModal(dinnerLogs)}/>
                             <MarginComponent marginBottom={5}/>
                             <View style={styles.ingredientBox}>                   
                                 <MealIngredients items={dinnerLogs.nonCataloguedFood} backgroundColor={colors.dinner} textColor={colors.white} showSvg={false}/>
@@ -378,7 +485,7 @@ const StartScreen = () => {
                     )}
                     {snackLogs.map((snack, index) => (
                         <React.Fragment key={index}>
-                            <IngredientContainer title={snack.mealName} titleColor={colors.snack} fontSize={RFValue(22)} onPressEdit={() => openModal(snackLogs[index])}/>
+                            <IngredientContainer title={snack.mealName} titleColor={colors.snack} fontSize={RFValue(22)} onPressEdit={() => openModal(snackLogs[index])} onPressDelete={() => openDeleteModal(snackLogs[index])}/>
                             <MarginComponent marginBottom={5}/>
                             <View style={styles.ingredientBox}>                   
                                 <MealIngredients items={snack.nonCataloguedFood} backgroundColor={colors.snack} textColor={colors.white} showSvg={false}/>
@@ -390,11 +497,11 @@ const StartScreen = () => {
                     ))}
                     {!(areAllArraysEmpty(todaysSymptoms)) && (
                         <>
-                            <IngredientContainer title={'Symptoms'} titleColor={colors.symptom} fontSize={RFValue(20)}/>
+                            <IngredientContainer title={'Symptoms'} titleColor={colors.symptom} fontSize={RFValue(20)} onPressEdit={openSymptomModal} onPressDelete={() => openDeleteModal(todaysSymptoms[0].Date)}/>
                             <MarginComponent marginBottom={5}/>
                             <View style={styles.ingredientBox}>
                                 {todaysSymptoms.map((symptom, index) => (
-                                    <Ingredients key={index} title={symptom.Name} backgroundColor={symptom.Strenght == 'weak' ? colors.symptomWeak : (symptom.Strenght == 'medium' ? colors.symptomMiddle : colors.symptomStrong)} textColor={symptom.Strenght == 'medium' ? colors.black : colors.white} showSvg={false}/>
+                                    <Ingredients key={index} title={symptom.Name} backgroundColor={symptom.Strenght == 'weak' ? colors.symptomWeak : (symptom.Strenght == 'medium' ? colors.symptomMiddle : colors.symptomStrong)} textColor={symptom.Strenght == 'medium' ? colors.black : colors.white} showSvg={false} />
                                 ))}
                             </View>
                             <MarginComponent marginBottom={RFValue(20)}/>
@@ -410,7 +517,7 @@ const StartScreen = () => {
                             <MarginComponent marginTop={5}/>
                             <InputComponent title={'Menu'} placeholder={'Search for a menu'} showButton={menuDescription.length > 0} actionButtonTitle={'Add menu'} textInputValue={menuDescription} onChangeText={setMenuDescription} titleColor={colors.menu} borderColor={colors.menu} showSuggestions={true} showMenuSuggestion={true} backgroundColorSuggestions={colors.menu} onSelectMenuItem={handleSelectMenuItem} onActionPress={() => AddIngredientsToSummary(modalData.logID, modalData.mealName)}/>
                             <MarginComponent marginTop={5}/>
-                            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled' style={styles.scrollViewFoods}>
+                            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled' style={styles.scrollViewIngredients}>
                                 <IngredientContainer title={'Summary'} fontSize={RFValue(18)} showDelete={false} showEdit={false} showUnderline={false}/>
                                 <View style={styles.ingredientBox}> 
                                         <MealIngredients category={'nonCataloguedFood'} items={modalData.nonCataloguedFood} backgroundColor={modalColor} textColor={colors.white} onPress={DeleteIngredientFromSummary}/>
@@ -428,6 +535,54 @@ const StartScreen = () => {
                             colorArrowButton={modalColor}
                             onPressArrowButton={closeModal}
                             onPressTaskButton={UpdateDatabase}
+                        />
+                    </GenericModal>
+                )}
+                {editSymptoms && (
+                    <GenericModal>
+                        <IngredientContainer title={'Symptoms'} titleColor={colors.symptom} fontSize={RFValue(22)} showDelete={false} showEdit={false} showUnderline={false}/>
+                        <MarginComponent marginBottom={RFValue(-10)}/>
+                        <View style={{ maxHeight: RFValue(330) }}>
+                            <InputComponent placeholder={'Enter symptom'} textInputValue={symptomDescription} onChangeText={setSymptomDescription} borderColor={colors.symptom} showButton={false}/>
+                            <MarginComponent marginTop={5}/>
+                            <SymptomIntensity title={'Symptom intensity'} showButton={symptomDescription.length > 0 && symptomIntensity.length > 0} onPressAddButton={addSymptomToSummary} activeSymptomButton={setSymptomIntensity}/>
+                            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled' style={styles.scrollViewIngredients}>
+                                <IngredientContainer title={'Summary'} fontSize={RFValue(18)} showDelete={false} showEdit={false} showUnderline={false}/>
+                                <View style={styles.ingredientBox}> 
+                                {symptomModalData.map((symptom, index) => (
+                                    <Ingredients key={index} title={symptom.Name} backgroundColor={symptom.Strenght == 'weak' ? colors.symptomWeak : (symptom.Strenght == 'medium' ? colors.symptomMiddle : colors.symptomStrong)} textColor={symptom.Strenght == 'medium' ? colors.black : colors.white} onPress={() => deleteSymptomFromSummary(index)}/>
+                                ))}
+                                </View>
+                            </ScrollView>
+                        </View>
+                        <MarginComponent marginBottom={10}/>
+                        <FinishOrBackControl 
+                            showSaveSymbol={true}
+                            titleTaskButton={'Save'}
+                            colorTaskButton={colors.symptom}
+                            textColorTaskButton={colors.white}
+                            colorArrowButton={colors.symptom}
+                            onPressArrowButton={closeModal}
+                            onPressTaskButton={updateSymptomDatabase}
+                        />
+                    </GenericModal>
+                )}
+                {openModalToDelete && (
+                    <GenericModal>
+                        <Text style={styles.deleteText}>
+                            Do you really want to delete the {''}
+                            <Text style={{ ...styles.highlightedText, color: getColorByType(selectedLogToDelete.mealName) }}>{selectedLogToDelete.mealName || 'Symptoms'}</Text>
+                            {''} entry?
+                        </Text>
+                        <MarginComponent marginTop={RFValue(10)}/>
+                        <FinishOrBackControl 
+                            showSymbolTaskButton={false}
+                            titleTaskButton={'Delete'}
+                            colorTaskButton={colors.symptomStrong}
+                            textColorTaskButton={colors.white}
+                            colorArrowButton={colors.black}
+                            onPressArrowButton={closeModal}
+                            onPressTaskButton={deleteEntry}
                         />
                     </GenericModal>
                 )}
@@ -454,9 +609,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    scrollViewFoods: {
+    scrollViewIngredients: {
         maxHeight: RFValue(180),
     },
+    deleteText: {
+        fontSize: RFValue(18),
+        justifyContent: 'center',
+        alignSelf: 'center',
+    },
+    highlightedText: {
+        fontWeight: 'bold',
+    }
 });
 
 export default StartScreen;

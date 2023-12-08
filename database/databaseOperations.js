@@ -231,6 +231,21 @@ export const deleteNonCataloguedFoodByNameAndLogId = (dailyLogId, name) => {
     });
 };
 
+// DELETE: Funktion zum Löschen eines nicht katalogisierten Lebensmittels anhand der DailyLogID
+export const deleteNonCataloguedFoodByLogId = (dailyLogId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM NonCataloguedFood WHERE DailyLogID = ?;",
+                [dailyLogId],
+                (_, results) => resolve(results),
+                (_, error) => reject(error)
+            );
+        });
+    });
+};
+
+
 
 // --------------------------------------Menüs------------------------------------
 
@@ -591,6 +606,24 @@ export const deleteDailyLogFoodItem = (logID, foodID) => {
     });
 };
 
+// DELETE: Funktion um einen Eintrag in DailyLog_FoodItems zu löschen anhand der LogID
+export const deleteDailyLogFoodItemByID = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM DailyLog_FoodItems WHERE LogID = ?;",
+                [logID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
 
 // --------------------------------------DailyLog_Menus------------------------------------
 
@@ -654,6 +687,24 @@ export const deleteDailyLogMenu = (logID, menuID) => {
     });
 };
 
+// DELETE: Funktion um einen Eintrag in DailyLog_Menus zu löschen anhand der LogID
+export const deleteDailyLogMenuByID = (logID) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM DailyLog_Menus WHERE LogID = ?;",
+                [logID],
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
 
 // --------------------------------------Symptoms------------------------------------
 
@@ -675,7 +726,7 @@ export const addSymptom = (name, strength, date) => {
     });
 };
 
-// READ: Funktion, um alle Symptome abzurufen
+// READ: Funktion, um alle Symptome abzurufen anhand des Datums
 export const getSymptomsByDate = (date) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
@@ -694,6 +745,28 @@ export const getSymptomsByDate = (date) => {
                 }
             );
         });
+    });
+};
+
+// READ: Funktion, um alle Symptome abzurufen
+export const getAllSymptoms = () => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM Symptoms",
+                [],
+                (tx, results) => {
+                    let symptoms = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        symptoms.push(results.rows.item(i));
+                    }
+                    resolve(symptoms);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        })  
     });
 };
 
@@ -730,5 +803,43 @@ export const deleteSymptom = (symptomID) => {
                 }
             );
         });
+    });
+};
+
+// DELETE: Funktion, um ein Symptom zu löschen anhand des Datum im Format YYYY-MM-DD
+export const deleteSymptomsByDate = (date) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM Symptoms WHERE Date = ?;",
+                [date],
+                (tx, results) => {
+                    resolve(results);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// --------------------------------------Datenimport------------------------------------
+
+// READ and INSERT: Funktion, um die Food-Tabelle zu lesen und wenn diese leer ist, die Datenbank mit bereitgestellten Daten zu befüllen
+export const insertFoodItemsFromJson = (array) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            "SELECT COUNT(*) AS count FROM FoodItems;",
+            [],
+            (_, { rows }) => {
+                if (rows._array[0].count === 0) {
+                    array.forEach(item => {
+                        tx.executeSql("INSERT INTO FoodItems (Name) VALUES (?);", [item.name]);
+                    });
+                }
+            },
+            (t, error) => { console.log("DB error load food items from JSON"); console.log(error); },
+        );
     });
 };

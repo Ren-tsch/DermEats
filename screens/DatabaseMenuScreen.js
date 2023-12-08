@@ -30,6 +30,9 @@ const DatabaseMenuScreen = () => {
     const navigateToAddMenuToLibraryScreen = () => {
         navigation.navigate('AddMenuToLibraryScreen');
     };
+    const navigateToAllergyInfoScreen = () => {
+        navigation.navigate('AllergyInfoScreen')
+    }
 
     return (
         <SafeAreaProvider>
@@ -47,7 +50,7 @@ const DatabaseMenuScreen = () => {
                         <NavigationButton title={'Add menu to library'} textColor={colors.black} buttonColor={colors.menu} onPress={navigateToAddMenuToLibraryScreen}/>
                     </View>
                     <View>
-                        <FinishOrBackControl showTaskButton={false} colorArrowButton={colors.black} onPressArrowButton={navigateToStartScreen}/>
+                        <FinishOrBackControl showTaskButton={true} showSymbolTaskButton={false} titleTaskButton={'Information on allergies'} colorTaskButton={colors.symptom} textColorTaskButton={colors.white} colorArrowButton={colors.black} onPressArrowButton={navigateToStartScreen} onPressTaskButton={navigateToAllergyInfoScreen}/>
                         <MarginComponent marginBottom={15} />
                     </View>
                 </View>

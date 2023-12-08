@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Keyboard, Alert } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -22,16 +22,17 @@ const CalendarScreen = () => {
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
                 <View style={styles.content}>
-                    <Title title={'Calendar'} calendarMode={true}/>
+                    <MarginComponent marginTop={10}/>
+                    <Title title={'Calendar'} calendarMode={true} onPushLeftArrow={() =>{}} onPushRightArrow={() => {}}/>
                     <View style={styles.calendar}>
-                        <CalendarComponent />
+                        <CalendarComponent/>
                     </View>
                     <View>
                         <FinishOrBackControl colorArrowButton={colors.black} onPressArrowButton={navigateToStartScreen} showTaskButton={false}/>
                         <MarginComponent marginBottom={15}/>     
                     </View>
                 </View>
-                <Navbar/>     
+                <Navbar/>
             </SafeAreaView>
         </SafeAreaProvider>
     );

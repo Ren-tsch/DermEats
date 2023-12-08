@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import colors from './colors';
@@ -7,7 +7,8 @@ import colors from './colors';
 const MealTypeSelector = ({ 
   title, // Titel der Komponente
   titleColor, // Farbe des Titels
-  onPressedButton // Callback-Funktion, die beim Drücken eines Buttons aufgerufen wird
+  onPressedButton, // Callback-Funktion, die beim Drücken eines Buttons aufgerufen wird
+  resetTrigger,
 }) => {
 
   const [buttonName, setButtonName] = useState([]) // Lokaler State für den Namen des aktiven Buttons
@@ -35,6 +36,10 @@ const MealTypeSelector = ({
           break;
       }
   }
+
+  useEffect(() => {
+    setButtonName([])
+  },[resetTrigger])
 
   return (
     <View style={styles.container}>
